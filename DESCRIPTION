@@ -1,0 +1,16 @@
+Package: upnews
+Type: Package
+Title: Display news for outdated github packages
+Version: 0.0.9000
+Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")))
+Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
+Description: Fetch remote HEAD sha1 of local github packages and compare them,
+  if some pacakges are outdated, fetch and display the NEWS file of newer versions.
+Depends: R (>= 3.5.0)
+Suggests:
+  git2r,
+  gh
+License: Apache License (>= 2.0)
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
