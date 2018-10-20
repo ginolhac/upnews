@@ -33,11 +33,19 @@ get_remote_sha1 <- function(meta) {
   }, character(1))
 }
 
+#' copies from r-lib/sessioninfo GPL/2
+#' @param desc pkg description
+local_version <- function(desc) {
+  vapply(desc, function(x) paste0(
+    x$GithubUsername, "/",
+    x$GithubRepo, "@",
+    substr(x$GithubSHA1, 1, 7), ")"), character(1))
+}
+
 #' fetch distant news file
 #' @param repos pkg user/repo
 fetch_news <- function(repos) {
   #TODO
-  # - turn this into a function
   # - look recursively in the tree or only the root? check for the 37 repos
   # - deal with several positive answers, rank by extension
   # query the files/folder at repo root
