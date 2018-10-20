@@ -7,10 +7,10 @@ Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
 Description: Fetch remote HEAD sha1 of local github packages and compare them,
   if some pacakges are outdated, fetch and display the NEWS file of newer versions.
 Depends: R (>= 3.5.0)
-Suggests:
+Imports:
   git2r,
   gh
 License: Apache License (>= 2.0)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
