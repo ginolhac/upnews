@@ -19,7 +19,7 @@ upnews <- function() {
   tibble::tibble(
     pkgs = outdated_repos,
     local = local_version(local_gh_pkg()[outdated_repos]),
-    remote = paste0("@", substr(remote_sha[outdated_repos], 1, 7)),
+    remote = remote_version(repos[outdated_repos], remote_sha[outdated_repos]),
     news = news)
 }
 

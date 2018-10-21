@@ -25,7 +25,9 @@ extract_gh_sha1 <- function(desc) {
 #'
 #' @param desc pkg description
 get_user_repo <- function(desc) {
-  vapply(desc, function(x) paste0(x$GithubUsername, "/", x$GithubRepo), character(1))
+  vapply(desc, function(x) {
+    paste0(x$GithubUsername, "/", x$GithubRepo, "/", x$GithubRef)
+  }, character(1))
 }
 
 #' fetch distant HEAD sha1sum
@@ -36,8 +38,9 @@ get_remote_sha1 <- function(repos) {
   pblapply(repos, function(x) {
     user <- strsplit(x, "/")[[1]][1]
     repo <- strsplit(x, "/")[[1]][2]
+    ref  <- strsplit(x, "/")[[1]][3]
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",
-       owner = user, repo = repo, ref = "master")[["object"]][["sha"]]
+       owner = user, repo = repo, ref = ref)[["object"]][["sha"]]
   })
 }
 
@@ -63,8 +66,9 @@ fetch_news <- function(repos) {
   # query the files/folder at repo root
   user <- strsplit(repos, "/")[[1]][1]
   repo <- strsplit(repos, "/")[[1]][2]
-  gh_list <- gh::gh("GET /repos/:owner/:repo/contents/:path",
-                    owner = user, repo = repo, path = ".")
+  ref <- strsplit(repos, "/")[[1]][3]
+  gh_list <- gh::gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
+                    owner = user, repo = repo, path = ".", ref = ref)
   # extract the flatten chr list
   remote_list <- vapply(gh_list, "[[", "", "name")
   # look for a news files
@@ -92,4 +96,16 @@ fetch_news <- function(repos) {
 compare_sha1 <- function(a, b) {
   if (sum(names(a) != names(b)) > 0) stop("vectors differ", call. = FALSE)
   names(a[a != b])
+}
+
+#' build remote version, ref and short sha1
+#'
+#' @param ref vector of repo ref
+#' @param sha vector of sha1sum
+#'
+remote_version <- function(ref, sha) {
+  if (sum(names(ref) != names(sha)) > 0) stop("names differs", call. = FALSE)
+  ref  <- strsplit(ref, "/")[[1]][3]
+  paste0(ref, "@",
+         substr(remote_sha[outdated_repos], 1, 7))
 }
