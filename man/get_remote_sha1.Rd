@@ -4,10 +4,10 @@
 \alias{get_remote_sha1}
 \title{fetch distant HEAD sha1sum}
 \usage{
-get_remote_sha1(meta)
+get_remote_sha1(repos)
 }
 \arguments{
-\item{meta}{pkg user/repo}
+\item{repos}{pkg user/repo}
 }
 \description{
 fetch distant HEAD sha1sum

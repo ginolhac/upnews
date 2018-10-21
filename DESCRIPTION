@@ -9,7 +9,7 @@ Description: Fetch remote HEAD sha1 of local github packages and compare them,
   if some pacakges are outdated, fetch and display the NEWS file of newer versions.
 Depends: R (>= 3.5.0)
 Imports:
-  git2r,
+  pbapply,
   gh, tibble
 License: Apache License (>= 2.0)
 URL: https://github.com/ginolhac/upnews

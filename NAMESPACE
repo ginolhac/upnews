@@ -2,7 +2,7 @@
 
 export(upnews)
 importFrom(gh,gh)
-importFrom(git2r,remote_ls)
+importFrom(pbapply,pblapply)
 importFrom(stats,setNames)
 importFrom(tibble,tibble)
 importFrom(utils,installed.packages)
