@@ -1,16 +1,18 @@
 Package: upnews
 Type: Package
 Title: Display news for outdated github packages
-Version: 0.0.9000
+Version: 0.1
 Date: 2018-10-20
 Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")))
 Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
-Description: Fetch remote HEAD sha1 of local github packages and compare them,
-  if some pacakges are outdated, fetch and display the NEWS file of newer versions.
+Description: This add-in will fetch the remote HEAD sha1 of local github packages 
+    and compare them, to the remote HEAD (same branch). 
+    If some packages are outdated, fetch and display a link to a NEWS file (case insensitive NEWS.md).
 Depends: R (>= 3.5.0)
 Imports:
   pbapply,
   gh, tibble,
+  DT,
   shiny (>= 0.13),
   miniUI (>= 0.1.1),
   rstudioapi (>= 0.5)

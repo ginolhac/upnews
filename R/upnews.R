@@ -11,15 +11,16 @@ upnews_ui <- function() {
 
   ui <- miniPage(
     gadgetTitleBar("NEWS of outdated github packages",
-    right = miniTitleBarButton("done", "OK", TRUE)
+                   # from https://github.com/gadenbuie/regexplain/blob/master/R/regex_help.R
+                   right = miniTitleBarButton("done", "OK", TRUE)
     ),
     miniContentPanel(
-      DT::dataTableOutput("table")
+      dataTableOutput("table")
     )
   )
 
   server <- function(input, output, session) {
-    output$table <- DT::renderDataTable({
+    output$table <- renderDataTable({
       up <- upnews()
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>NEWS</a>"), "none")
       up
