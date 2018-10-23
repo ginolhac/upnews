@@ -76,7 +76,7 @@ fetch_news <- function(repos) {
   news_idx <- grep("news\\.md", remote_list, ignore.case = TRUE)
   if (length(news_idx) == 0) {
     message(paste("no news for", repos))
-    return(NULL)
+    return(NA)
   } else if (length(news_idx) > 1) {
     message(paste("multiple news for", repos))
     # give chance
@@ -107,5 +107,5 @@ remote_version <- function(ref, sha) {
   if (sum(names(ref) != names(sha)) > 0) stop("names differs", call. = FALSE)
   ref  <- strsplit(ref, "/")[[1]][3]
   paste0(ref, "@",
-         substr(remote_sha[outdated_repos], 1, 7))
+         substr(sha, 1, 7))
 }

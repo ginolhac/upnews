@@ -10,7 +10,10 @@ Description: Fetch remote HEAD sha1 of local github packages and compare them,
 Depends: R (>= 3.5.0)
 Imports:
   pbapply,
-  gh, tibble
+  gh, tibble,
+  shiny (>= 0.13),
+  miniUI (>= 0.1.1),
+  rstudioapi (>= 0.5)
 License: Apache License (>= 2.0)
 URL: https://github.com/ginolhac/upnews
 Encoding: UTF-8

@@ -1,0 +1,4 @@
+Name: upnews
+Description: Check outdated gh pkgs
+Binding: upnews_ui
+Interactive: false
