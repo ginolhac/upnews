@@ -1,6 +1,6 @@
 Package: upnews
 Type: Package
-Title: Display news for outdated github packages
+Title: Display news for outdated GitHub packages
 Version: 0.1
 Date: 2018-10-20
 Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")))
@@ -17,6 +17,8 @@ Suggests:
   shiny (>= 0.13),
   miniUI (>= 0.1.1),
   rstudioapi (>= 0.5)
+Enhances:
+  tibble
 License: Apache License (>= 2.0)
 URL: https://github.com/ginolhac/upnews
 BugReports: https://github.com/ginolhac/upnews/issues
