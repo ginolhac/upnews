@@ -33,6 +33,8 @@ If some packages are outdated, fetch and display a link to a NEWS file (case ins
 
 - smarter search for news 
 - add tests
+- add travis build status
+- add check buttons for **install**
 - use `cli` for console output
 - if this very useful since `remotes` v2.0.1 that allows an interactive upgrade?
 
