@@ -8,7 +8,7 @@ Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
 Description: This add-in will fetch the remote HEAD sha1 of local github packages 
     and compare them, to the remote HEAD (same branch). 
     If some packages are outdated, fetch and display a link to a NEWS file (case insensitive NEWS.md).
-Depends: R (>= 3.5.0)
+Depends: R (>= 3.1.0)
 Imports:
   pbapply,
   gh, tibble,
