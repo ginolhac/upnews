@@ -12,7 +12,8 @@ Depends: R (>= 3.2.5)
 Imports:
   pbapply,
   gh,
-  DT,
+  DT
+Suggests:
   shiny (>= 0.13),
   miniUI (>= 0.1.1),
   rstudioapi (>= 0.5)
