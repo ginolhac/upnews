@@ -7,7 +7,7 @@
 upnews()
 }
 \value{
-a tibble
+a data.frame
 }
 \description{
 no argument are used
