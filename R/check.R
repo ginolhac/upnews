@@ -17,7 +17,7 @@ upnews <- function() {
         pkgs = character(0),
         local = character(0),
         remote = character(0),
-        news = character(0))
+        news = character(0), stringsAsFactors = FALSE)
       )
   }
   news <- unlist(lapply(repos[outdated_repos], fetch_news))
@@ -25,9 +25,10 @@ upnews <- function() {
     pkgs = outdated_repos,
     local = local_version(local_gh_pkg()[outdated_repos]),
     remote = remote_version(repos[outdated_repos], remote_sha[outdated_repos]),
-    news = news)
+    news = news, stringsAsFactors = FALSE)
   # trick to get tibble output without dependencies by Eric Koncina
   class(df_news) <- c("tbl_df", "tbl", "data.frame")
+  if (requireNamespace("tibble", quietly = TRUE)) library(tibble)
   df_news
 }
 
