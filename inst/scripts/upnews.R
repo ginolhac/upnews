@@ -10,12 +10,12 @@ local({
                            right = miniUI::miniTitleBarButton("done", "OK", TRUE)
     ),
     miniUI::miniContentPanel(
-      dataTableOutput("table")
+      DT::dataTableOutput("table")
     )
   )
 
   server <- function(input, output, session) {
-    output$table <- renderDataTable({
+    output$table <- DT::renderDataTable({
       up <- upnews()
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>NEWS</a>"), "none")
       up
