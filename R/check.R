@@ -14,9 +14,17 @@ upnews <- function() {
   local_sha <- extract_gh_sha1(local_gh_pkg())
   outdated_repos <- compare_sha1(local_sha, remote_sha)
   message(paste(length(outdated_repos), "outdated pkgs, fetching news..."))
-  #repos[outdated_repos]
+  if (length(outdated_repos) == 0) {
+    return(
+      tibble::tibble(
+        pkgs = character(0),
+        local = character(0),
+        remote = character(0),
+        news = character(0))
+      )
+  }
   news <- lapply(repos[outdated_repos], fetch_news)
-  tibble::tibble(
+  tibble(
     pkgs = outdated_repos,
     local = local_version(local_gh_pkg()[outdated_repos]),
     remote = remote_version(repos[outdated_repos], remote_sha[outdated_repos]),
