@@ -28,7 +28,7 @@ upnews <- function() {
     news = news, stringsAsFactors = FALSE)
   # trick to get tibble output without dependencies by Eric Koncina
   class(df_news) <- c("tbl_df", "tbl", "data.frame")
-  if (requireNamespace("tibble", quietly = TRUE)) library(tibble)
+  if (requireNamespace("tibble", quietly = TRUE)) requireNamespace("tibble")
   df_news
 }
 
