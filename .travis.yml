@@ -4,6 +4,9 @@ language: R
 sudo: false
 cache: packages
 
-os:
-  - linux
-  - osx
+r:
+- 3.2
+- 3.3
+- oldrel
+- release
+- devel
