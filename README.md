@@ -1,5 +1,7 @@
 # upnews
 
+[![Travis-CI Build Status](https://travis-ci.org/ginolhac/upnews.svg?branch=master)](https://travis-ci.org/ginolhac/upnews)
+
 Display news for outdated github packages
 
 ## Motivation
@@ -55,6 +57,18 @@ no news for jeroen/commonmark/master
 - finally a [`DataTable`](https://rstudio.github.io/DT/) output in the viewer is displayed such as:
 
 ![](docs/screenshot.png)
+
+## increase limits to the GITHUB API
+
+If you need more request to the GitHub API, you must be authenticated. Then, the limit
+is **5,000** requests per hour instead of **60**.
+
+To authenticate yourself, you can follow the great [happygitwithr](http://happygitwithr.com) bookdown by Jenny Bryan. The specific chapter about the `GITHUB_PAT` env variable is [here](http://happygitwithr.com/github-pat.html). Brefly:
+
+- create a token with no rights on GitHub
+- write this token in your `~/.Renviron` file
+- from a fresh R session, check you registered token with `Sys.getenv("GITHUB_PAT")`
+
 
 ## TODO
 
