@@ -74,8 +74,6 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 
 - smarter search for news 
 - add tests
-- add travis build status
-- add check buttons for **install**
 - use `cli` for console output
 - is it useful since `remotes` v2.0.1 allows an interactive upgrade?
 

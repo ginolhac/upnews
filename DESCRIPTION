@@ -1,7 +1,7 @@
 Package: upnews
 Type: Package
 Title: Display news for outdated GitHub packages
-Version: 0.1
+Version: 0.1.0.99
 Date: 2018-10-20
 Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")))
 Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
@@ -14,6 +14,7 @@ Imports:
   gh
 Suggests:
   DT,
+  remotes,
   shiny (>= 0.13),
   miniUI (>= 0.1.1),
   rstudioapi (>= 0.5)
