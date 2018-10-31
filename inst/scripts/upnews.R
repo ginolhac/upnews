@@ -11,51 +11,74 @@ local({
                            right = miniUI::miniTitleBarButton("done", "Close", TRUE)
     ),
     miniUI::miniContentPanel(
-      DT::DTOutput("table"),
-      miniUI::miniButtonBlock(
-        shiny::actionButton("install", "Install checked pkgs",
-                            style = "text-align: center; color: #fff; background-color: #337ab7; border-color: #2e6da4",
-                            icon = shiny::icon("download"), width = "200px")
+      shinycssloaders::withSpinner(DT::DTOutput("table"),
+                                   proxy.height = "200px"),
+      shiny::wellPanel(
+        shiny::fluidRow(
+          shiny::column(4, shiny::checkboxInput("deps", "dependencies = TRUE")),
+          shiny::column(4,
+                        shiny::actionButton("install", "Update",
+                                            style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
+                                            icon = shiny::icon("pause"), width = "100%")
+          ),
+          shiny::column(4)
+        )
       )
     )
   )
-
   server <- function(input, output, session) {
-    up <- reactive({
+
+    up <- shiny::reactive({
       up <- upnews()
+      pkgs <- vapply(up$local, function(x) strsplit(x, split = "@")[[1]][1], character(1))
+      pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank'>", up$pkgs, "</a>")
+      up$pkgs <- pkgs
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>NEWS</a>"), "none")
       up
     })
-
-
     output$table <- DT::renderDT({
       up()
-    }, escape = FALSE)
-    shiny::observeEvent(input$install, {
-      nb_selected <- input$table_rows_selected
-      if ( length(nb_selected) == 0 ) {
+    }, escape = FALSE, rownames = FALSE)
+
+    # return number of selected lines
+    nb_selected <- shiny::eventReactive(input$table_rows_selected, {
+      length(input$table_rows_selected)
+    })
+    # be default, ignoreNULL is TRUE, Victor Perrier pointed me out this option
+    # so when all rows are deselected, NULL value is also triggered
+    shiny::observeEvent(input$table_rows_selected, ignoreNULL = FALSE, {
+      if ( is.null(input$table_rows_selected) ) {
+        shiny::updateActionButton(session, "install", "Update", icon = shiny::icon("pause"))
+      } else {
+        shiny::updateActionButton(session, "install", paste("install", nb_selected(), "package(s)"),
+                           icon = shiny::icon("download"))
+        }
+      })
+    shiny::observeEvent(input$install, ignoreNULL = FALSE, {
+      if ( is.null(input$table_rows_selected) ) {
         rstudioapi::showDialog("Warning",
                                "Nothing is selected. Select line(s) by clicking on it (them)\n")
         return()
       }
+      plural <- ifelse(nb_selected() == 1, "package", "packages")
       if ( !requireNamespace("remotes", quietly = TRUE)) {
         rstudioapi::showDialog("Error", "Remotes is not installed", "https://github.com/r-lib/remotes")
         return()
       } else {
         if (!rstudioapi::showQuestion(title = "Confirm", ok = "OK",
-                                      cancel = "Cancel", paste("Are you sure you want to update",
-                                                               length(nb_selected),
-                                                               ifelse(nb_selected == 1, "package?", "packages?")))) return()
+                                      cancel = "Cancel", paste0("Are you sure you want to update ",
+                                                               nb_selected(), " ", plural, "?"))) return()
         split_at <- function(x) strsplit(x, split = "@")[[1]][1]
         pkgs <- vapply(up()$local[input$table_rows_selected], split_at, character(1))
         refs <- vapply(up()$remote[input$table_rows_selected], split_at, character(1))
-        utils::getFromNamespace("install_github", "remotes")(paste(pkgs, refs, sep = "@"))
+        if (input$deps) {
+          utils::getFromNamespace("install_github", "remotes")(paste(pkgs, refs, sep = "@"), upgrade = "never", dependencies = TRUE)
+        } else {
+          utils::getFromNamespace("install_github", "remotes")(paste(pkgs, refs, sep = "@"), upgrade = "never")
+        }
       }
     })
     shiny::observeEvent(input$done, {
-      shiny::stopApp()
-    })
-    shiny::observeEvent(input$cancel, {
       shiny::stopApp()
     })
   }

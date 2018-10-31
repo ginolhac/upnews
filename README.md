@@ -70,6 +70,10 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 - from a fresh R session, check you registered token with `Sys.getenv("GITHUB_PAT")`
 
 
+## Related packages
+
+[@Pakillo](https://github.com/Pakillo) recently made me aware of this similar package [dtupdate](https://github.com/hrbrmstr/dtupdate) by Bob Rudis. It has no add-in plus a dependency to `dplyr` but must be more stable than this one.
+
 ## TODO
 
 - smarter search for news 
