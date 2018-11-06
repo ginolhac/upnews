@@ -21,7 +21,9 @@ local({
                                             style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
                                             icon = shiny::icon("pause"), width = "100%")
           ),
-          shiny::column(4)
+          shiny::column(4,
+                        shiny::actionButton("refresh", "refresh", width = "100%")
+          )
         )
       )
     )
@@ -36,11 +38,16 @@ local({
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>NEWS</a>"), "none")
       up
     })
+    # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
+    # and https://github.com/rstudio/DT/issues/265
     output$table <- DT::renderDT({
       up()
     }, escape = FALSE, rownames = FALSE)
 
-    # return number of selected lines
+    shiny::observeEvent(input$refresh, {
+      session$reload()
+    })
+      # return number of selected lines
     nb_selected <- shiny::eventReactive(input$table_rows_selected, {
       length(input$table_rows_selected)
     })
@@ -50,14 +57,15 @@ local({
       if ( is.null(input$table_rows_selected) ) {
         shiny::updateActionButton(session, "install", "Update", icon = shiny::icon("pause"))
       } else {
-        shiny::updateActionButton(session, "install", paste("install", nb_selected(), "package(s)"),
+        shiny::updateActionButton(session, "install", paste("Update", nb_selected(), "package(s)"),
                            icon = shiny::icon("download"))
         }
       })
     shiny::observeEvent(input$install, ignoreNULL = FALSE, {
-      if ( is.null(input$table_rows_selected) ) {
+      # warning is nothing is selected but only when selection has occured
+      if ( is.null(input$table_rows_selected) && !is.null(input$table_row_last_clicked)) {
         rstudioapi::showDialog("Warning",
-                               "Nothing is selected. Select line(s) by clicking on it (them)\n")
+                               "Nothing is selected")
         return()
       }
       plural <- ifelse(nb_selected() == 1, "package", "packages")
