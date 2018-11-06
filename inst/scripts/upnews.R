@@ -21,8 +21,7 @@ local({
                                             style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
                                             icon = shiny::icon("pause"), width = "100%")
           ),
-          shiny::column(4,
-                        shiny::actionButton("refresh", "refresh", width = "100%")
+          shiny::column(4, shiny::actionButton("refresh", "refresh", width = "100%")
           )
         )
       )
@@ -32,6 +31,9 @@ local({
 
     up <- shiny::reactive({
       up <- upnews()
+      if (nrow(up) == 0) {
+        return(up)
+      }
       pkgs <- vapply(up$local, function(x) strsplit(x, split = "@")[[1]][1], character(1))
       pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank'>", up$pkgs, "</a>")
       up$pkgs <- pkgs
