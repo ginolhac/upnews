@@ -21,7 +21,7 @@ local({
                                             style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
                                             icon = shiny::icon("pause"), width = "100%")
           ),
-          shiny::column(4, shiny::actionButton("refresh", "refresh", width = "100%")
+          shiny::column(4, shiny::actionButton("refresh", "refresh", icon = shiny::icon("sync-alt"), width = "100%")
           )
         )
       )
@@ -31,20 +31,39 @@ local({
 
     up <- shiny::reactive({
       up <- upnews()
+      # when all is up-to-date, just return the empty tibble
       if (nrow(up) == 0) {
         return(up)
       }
       pkgs <- vapply(up$local, function(x) strsplit(x, split = "@")[[1]][1], character(1))
       pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank'>", up$pkgs, "</a>")
       up$pkgs <- pkgs
-      up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>NEWS</a>"), "none")
+      up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>", as.character(shiny::icon("file-alt")), "</a>"), "none")
+      # thanks to https://stackoverflow.com/a/51146489/1395352
+      #up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); alert(event); return false;'; >NEWS</a>"), "none")
       up
     })
     # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
     # and https://github.com/rstudio/DT/issues/265
     output$table <- DT::renderDT({
       up()
-    }, escape = FALSE, rownames = FALSE)
+    },
+    escape = FALSE,
+    rownames = FALSE,
+    # from https://github.com/daattali/addinslist
+    options = list(
+      columnDefs = list(list(className = 'dt-center', targets = "_all")),
+      dom = "iftlp",
+      language = list(
+        zeroRecords = "No outdated packages",
+        info = "_TOTAL_ outdated packages",
+        infoFiltered = "",
+        infoPostFix = " (click any row to select packages)",
+        infoEmpty = "No outdated packages",
+        search = "",
+        searchPlaceholder = "Search..."
+      ))
+    )
 
     shiny::observeEvent(input$refresh, {
       session$reload()
