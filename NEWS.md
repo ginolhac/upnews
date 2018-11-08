@@ -4,6 +4,10 @@
     * with / without dependencies (pkgs in `Suggests` field)
 * add refresh button to reload the app
 
+Fix:
+
+- clicks on links don't trigger the row selection
+
 ## upnews 0.1
 
 * Add a shiny gadget as add-in

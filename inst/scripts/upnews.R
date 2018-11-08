@@ -36,11 +36,12 @@ local({
         return(up)
       }
       pkgs <- vapply(up$local, function(x) strsplit(x, split = "@")[[1]][1], character(1))
-      pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank'>", up$pkgs, "</a>")
-      up$pkgs <- pkgs
-      up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank'>", as.character(shiny::icon("file-alt")), "</a>"), "none")
+      # click on links should not trigger row selection
       # thanks to https://stackoverflow.com/a/51146489/1395352
-      #up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); alert(event); return false;'; >NEWS</a>"), "none")
+      pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>", up$pkgs, "</a>")
+      up$pkgs <- pkgs
+      up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;'; >",
+                                                as.character(shiny::icon("file-alt", "fa-2x")), "</a>"), "none")
       up
     })
     # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
@@ -50,16 +51,18 @@ local({
     },
     escape = FALSE,
     rownames = FALSE,
-    # from https://github.com/daattali/addinslist
     options = list(
+      # align center for all columns
       columnDefs = list(list(className = 'dt-center', targets = "_all")),
-      dom = "iftlp",
+      # display info summary, table, and pagination. Not filtering and length control
+      dom = "itp",
+      # from https://github.com/daattali/addinslist
       language = list(
-        zeroRecords = "No outdated packages",
-        info = "_TOTAL_ outdated packages",
+        zeroRecords = "up-to-date",
+        info = "_TOTAL_ outdated",
         infoFiltered = "",
-        infoPostFix = " (click any row to select packages)",
-        infoEmpty = "No outdated packages",
+        infoPostFix = " (click any row to select)",
+        infoEmpty = "up-to-date",
         search = "",
         searchPlaceholder = "Search..."
       ))
