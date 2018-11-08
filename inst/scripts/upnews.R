@@ -42,7 +42,7 @@ local({
       up$pkgs <- pkgs
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;'; >",
                                                 as.character(shiny::icon("file-alt", "fa-2x")), "</a>"), "none")
-      up
+      up[, c("pkgs", "loc_version", "gh_version", "date", "news")]
     })
     # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
     # and https://github.com/rstudio/DT/issues/265

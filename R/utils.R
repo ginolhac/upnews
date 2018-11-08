@@ -21,6 +21,14 @@ extract_gh_sha1 <- function(desc) {
   vapply(desc, function(x) x$GithubSHA1, character(1))
 }
 
+#' extract Version
+#'
+#' @param desc pkg description
+extract_version <- function(desc) {
+  vapply(desc, function(x) x$Version, character(1))
+}
+
+
 #' concatenate user/repo
 #'
 #' @param desc pkg description
@@ -36,12 +44,20 @@ get_user_repo <- function(desc) {
 get_remote_sha1 <- function(repos) {
   message("fetching distant sha1")
   pblapply(repos, function(x) {
-    user <- strsplit(x, "/")[[1]][1]
-    repo <- strsplit(x, "/")[[1]][2]
-    ref  <- strsplit(x, "/")[[1]][3]
+    rep <- slash_split(x)
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",
-       owner = user, repo = repo, ref = ref)[["object"]][["sha"]]
+       owner = rep$user, repo = rep$repo, ref = rep$ref)[["object"]][["sha"]]
   })
+}
+
+get_last_date <- function(repos, sha1) {
+  dates <- lapply(repos, function(x) {
+    rep <- slash_split(x)
+    last_date <- gh("GET /repos/:owner/:repo/commits/:sha",
+                    owner = rep$user, repo = rep$repo, sha = sha1)$commit$author$date
+    format(as.Date(last_date), "%Y-%m-%d")
+  })
+  unlist(dates)
 }
 
 #' copies from r-lib/sessioninfo GPL/2
@@ -64,11 +80,9 @@ fetch_news <- function(repos) {
   # - look recursively in the tree or only the root? check for the 37 repos
   # - deal with several positive answers, rank by extension
   # query the files/folder at repo root
-  user <- strsplit(repos, "/")[[1]][1]
-  repo <- strsplit(repos, "/")[[1]][2]
-  ref <- strsplit(repos, "/")[[1]][3]
-  gh_list <- gh::gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
-                    owner = user, repo = repo, path = ".", ref = ref)
+  rep <- slash_split(repos)
+  gh_list <- gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
+                    owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   # extract the flatten chr list
   remote_list <- vapply(gh_list, "[[", "", "name")
   # look for a news files
@@ -83,9 +97,26 @@ fetch_news <- function(repos) {
   } else {
     remote_list[news_idx]
     # get download url and read news files
-    #readLines(gh_list[[news_idx]]$download_url)
     gh_list[[news_idx]]$download_url
   }
+}
+
+slash_split <- function(repos) {
+  user <- strsplit(repos, "/")[[1]][1]
+  repo <- strsplit(repos, "/")[[1]][2]
+  ref <- strsplit(repos, "/")[[1]][3]
+  list(user = user,
+       repo = repo,
+       ref = ref)
+}
+
+fetch_desc <- function(repos) {
+  rep <- slash_split(repos)
+  gh_desc <- gh("GET /repos/:owner/:repo/contents/DESCRIPTION/?ref=:ref",
+                    owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
+  desc <- readLines(gh_desc$download_url)
+  version <- desc[grep("^Version:", desc)]
+  strsplit(version, " ")[[1]][2]
 }
 
 #' compare 2 vectors
