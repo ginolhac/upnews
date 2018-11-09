@@ -25,7 +25,7 @@ upnews <- function() {
   news <- unlist(lapply(repos[outdated_repos], fetch_news))
   remote_vers <- unlist(lapply(repos[outdated_repos], fetch_desc))
   df_news <- data.frame(
-    pkgs = outdated_repos,
+    pkgs = trim_ref(repos[outdated_repos]),
     loc_version = local_vers[outdated_repos],
     gh_version = remote_vers,
     local = local_version(gh_pkg[outdated_repos]),

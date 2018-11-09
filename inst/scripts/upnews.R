@@ -35,14 +35,15 @@ local({
       if (nrow(up) == 0) {
         return(up)
       }
-      pkgs <- vapply(up$local, function(x) strsplit(x, split = "@")[[1]][1], character(1))
+      pkgs <- vapply(up$pkgs, function(x) strsplit(x, split = "/")[[1]][1], character(1))
       # click on links should not trigger row selection
       # thanks to https://stackoverflow.com/a/51146489/1395352
-      pkgs <- paste0("<a href='https://github.com/", pkgs,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>", up$pkgs, "</a>")
+      pkgs <- paste0("<a href='https://github.com/", up$pkgs,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>", pkgs, "</a>")
+      up$repo <- up$pkgs
       up$pkgs <- pkgs
       up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;'; >",
                                                 as.character(shiny::icon("file-alt", "fa-2x")), "</a>"), "none")
-      up[, c("pkgs", "loc_version", "gh_version", "date", "news")]
+      up
     })
     # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
     # and https://github.com/rstudio/DT/issues/265
@@ -51,9 +52,12 @@ local({
     },
     escape = FALSE,
     rownames = FALSE,
+    class = "cell-border stripe",
     options = list(
       # align center for all columns
-      columnDefs = list(list(className = 'dt-center', targets = "_all")),
+      columnDefs = list(list(className = 'dt-center', targets = "_all"),
+                        # hide some columns
+                        list(visible = FALSE, targets = c(3, 4, 7))),
       # display info summary, table, and pagination. Not filtering and length control
       dom = "itp",
       # from https://github.com/daattali/addinslist
@@ -65,7 +69,14 @@ local({
         infoEmpty = "up-to-date",
         search = "",
         searchPlaceholder = "Search..."
-      ))
+      ),
+      # thanks to SBista https://stackoverflow.com/a/40634033/1395352
+      rowCallback = JS(
+        "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
+          "$('td:eq(0)', nRow).attr('title', aData[7]);",  # use $('td', nRow).attr for entire row
+          "$('td:eq(1)', nRow).attr('title', aData[3]);",  # use $('td', nRow).attr for entire row
+          "$('td:eq(2)', nRow).attr('title', aData[4]);",
+        "}"))
     )
 
     shiny::observeEvent(input$refresh, {
