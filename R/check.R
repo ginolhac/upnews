@@ -32,6 +32,7 @@ upnews <- function() {
     remote = remote_version(repos[outdated_repos], remote_sha[outdated_repos]),
     date = get_last_date(repos[outdated_repos], remote_sha[outdated_repos]),
     news = news, stringsAsFactors = FALSE)
+  attr(df_news, "gh_pkg") <- length(gh_pkg)
   # trick to get tibble output without dependencies by Eric Koncina
   class(df_news) <- c("tbl_df", "tbl", "data.frame")
   if (requireNamespace("tibble", quietly = TRUE)) requireNamespace("tibble")

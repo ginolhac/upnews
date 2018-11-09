@@ -38,11 +38,14 @@ local({
       pkgs <- vapply(up$pkgs, function(x) strsplit(x, split = "/")[[1]][1], character(1))
       # click on links should not trigger row selection
       # thanks to https://stackoverflow.com/a/51146489/1395352
-      pkgs <- paste0("<a href='https://github.com/", up$pkgs,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>", pkgs, "</a>")
+      stop_propagation <- "' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>"
+      pkgs <- paste0("<a href='https://github.com/", up$pkgs, stop_propagation, pkgs, "</a>")
       up$repo <- up$pkgs
       up$pkgs <- pkgs
-      up$news <- ifelse(!is.na(up$news), paste0("<a href='", up$news,"' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;'; >",
-                                                as.character(shiny::icon("file-alt", "fa-2x")), "</a>"), "none")
+      up$news <- ifelse(!is.na(up$news),
+                        paste0("<a href='", up$news, stop_propagation,
+                               as.character(shiny::icon("file-alt", "fa-2x")), "</a>"),
+                        as.character(shiny::icon("times", "fa-2x")))
       up
     })
     # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
@@ -63,7 +66,7 @@ local({
       # from https://github.com/daattali/addinslist
       language = list(
         zeroRecords = "up-to-date",
-        info = "_TOTAL_ outdated",
+        info = paste("_TOTAL_ outdated /", attributes(up())$gh_pkg),
         infoFiltered = "",
         infoPostFix = " (click any row to select)",
         infoEmpty = "up-to-date",
@@ -71,12 +74,13 @@ local({
         searchPlaceholder = "Search..."
       ),
       # thanks to SBista https://stackoverflow.com/a/40634033/1395352
-      rowCallback = JS(
+      rowCallback = DT::JS(
         "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
           "$('td:eq(0)', nRow).attr('title', aData[7]);",  # use $('td', nRow).attr for entire row
-          "$('td:eq(1)', nRow).attr('title', aData[3]);",  # use $('td', nRow).attr for entire row
+          "$('td:eq(1)', nRow).attr('title', aData[3]);",
           "$('td:eq(2)', nRow).attr('title', aData[4]);",
-        "}"))
+        "}")
+      )
     )
 
     shiny::observeEvent(input$refresh, {
