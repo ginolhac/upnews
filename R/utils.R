@@ -51,25 +51,30 @@ get_remote_sha1 <- function(repos) {
 }
 
 get_last_date <- function(repos, sha1) {
-  dates <- lapply(repos, function(x) {
+  vapply(repos, function(x) {
     rep <- slash_split(x)
     last_date <- gh("GET /repos/:owner/:repo/commits/:sha",
                     owner = rep$user, repo = rep$repo, sha = sha1)$commit$author$date
     format(as.Date(last_date), "%Y-%m-%d")
-  })
-  unlist(dates)
+  }, character(1))
 }
 
-#' copies from r-lib/sessioninfo GPL/2
+#' copies from r-lib/sessioninfo licence GPL/2
 #'
 #' @param desc pkg description
 #'
 local_version <- function(desc) {
   vapply(desc, function(x) paste0(
-    x$GithubUsername, "/",
-    x$GithubRepo, "@",
+    x$GithubRef, "@",
     substr(x$GithubSHA1, 1, 7), ")"), character(1))
 }
+
+trim_ref <- function(repos) {
+  vapply(repos, function(x) {
+    paste(strsplit(repos, "/")[[1]][1:2], collapse = "/")
+  }, character(1))
+}
+
 
 #' fetch distant news file
 #'
