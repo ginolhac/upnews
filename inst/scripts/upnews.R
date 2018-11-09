@@ -48,8 +48,7 @@ local({
                         as.character(shiny::icon("times", "fa-2x")))
       up
     })
-    # to test : https://github.com/rstudio/DT/issues/394#issuecomment-280142373
-    # and https://github.com/rstudio/DT/issues/265
+
     output$table <- DT::renderDT({
       up()
     },
@@ -73,6 +72,7 @@ local({
         search = "",
         searchPlaceholder = "Search..."
       ),
+      # pop hover ref/commit for local and remote versions
       # thanks to SBista https://stackoverflow.com/a/40634033/1395352
       rowCallback = DT::JS(
         "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",

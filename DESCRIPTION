@@ -13,12 +13,14 @@ Imports:
   pbapply,
   gh
 Suggests:
-  DT,
-  remotes,
-  shinycssloaders,
-  shiny (>= 0.13),
-  miniUI (>= 0.1.1),
-  rstudioapi (>= 0.5)
+    DT,
+    remotes,
+    shinycssloaders,
+    shiny (>= 0.13),
+    miniUI (>= 0.1.1),
+    rstudioapi (>= 0.5),
+    testthat,
+    covr
 Enhances:
   tibble
 License: Apache License (>= 2.0)
