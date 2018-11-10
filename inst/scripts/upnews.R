@@ -64,11 +64,11 @@ local({
       dom = "itp",
       # from https://github.com/daattali/addinslist
       language = list(
-        zeroRecords = "up-to-date",
+        zeroRecords = paste0("up-to-date (", attributes(up())$gh_pkg, " gh pkgs)"),
         info = paste("_TOTAL_ outdated /", attributes(up())$gh_pkg),
         infoFiltered = "",
         infoPostFix = " (click any row to select)",
-        infoEmpty = "up-to-date",
+        infoEmpty = "",
         search = "",
         searchPlaceholder = "Search..."
       ),

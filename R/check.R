@@ -14,13 +14,13 @@ upnews <- function() {
   outdated_repos <- compare_sha1(local_sha, remote_sha)
   message(paste(length(outdated_repos), "outdated pkgs, fetching news..."))
   if (length(outdated_repos) == 0) {
-    return(
-      data.frame(
-        pkgs = character(0),
-        local = character(0),
-        remote = character(0),
-        news = character(0), stringsAsFactors = FALSE)
-      )
+    df_news <- data.frame(
+      pkgs = character(0),
+      local = character(0),
+      remote = character(0),
+      news = character(0), stringsAsFactors = FALSE)
+    attr(df_news, "gh_pkg") <- length(gh_pkg)
+    return(df_news)
   }
   news <- unlist(lapply(repos[outdated_repos], fetch_news))
   remote_vers <- unlist(lapply(repos[outdated_repos], fetch_desc))
