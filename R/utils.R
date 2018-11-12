@@ -45,18 +45,34 @@ get_remote_sha1 <- function(repos) {
   message("fetching distant sha1")
   pblapply(repos, function(x) {
     rep <- slash_split(x)
+    rep$ref <- gh_fix_ref(rep$ref)
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",
        owner = rep$user, repo = rep$repo, ref = rep$ref)[["object"]][["sha"]]
   })
 }
 
+
+gh_fix_ref <- function(ref) {
+  # FIXME refs work only it is a branch
+  # list all branchs with:
+  # unlist(lapply(gh::gh("GET /repos/ginolhac/upnews/branches"), function(x) x$name))
+  # display a commit gh::gh("GET /repos/ginolhac/bifag/commits/d490355")
+  if (grepl("[0-9a-f]{7,40}", ref)) {# c("d490355", "master", "dev", "cc2db095e9dcfc52346c1ffeeb84a0e13f12c22a")
+    # https://stackoverflow.com/a/468378/1395352
+    # deal with a commit, surely, check if it is a ref
+    # quick and dirty fix, use master
+    ref <- "master"
+  }
+  ref
+}
+
 get_last_date <- function(repos, sha1) {
-  vapply(repos, function(x) {
-    rep <- slash_split(x)
+  mapply(function(rep, sha) {
+    rep <- slash_split(rep)
     last_date <- gh("GET /repos/:owner/:repo/commits/:sha",
-                    owner = rep$user, repo = rep$repo, sha = sha1)$commit$author$date
+                    owner = rep$user, repo = rep$repo, sha = sha)$commit$author$date
     format(as.Date(last_date), "%Y-%m-%d")
-  }, character(1))
+  }, repos, sha1, SIMPLIFY = TRUE, USE.NAMES = TRUE)
 }
 
 #' copies from r-lib/sessioninfo licence GPL/2
@@ -65,13 +81,14 @@ get_last_date <- function(repos, sha1) {
 #'
 local_version <- function(desc) {
   vapply(desc, function(x) paste0(
+    #FIXME when ref is a commit
     x$GithubRef, "@",
     substr(x$GithubSHA1, 1, 7), ")"), character(1))
 }
 
 trim_ref <- function(repos) {
   vapply(repos, function(x) {
-    paste(strsplit(repos, "/")[[1]][1:2], collapse = "/")
+    paste(strsplit(x, "/")[[1]][1:2], collapse = "/")
   }, character(1))
 }
 
@@ -86,6 +103,7 @@ fetch_news <- function(repos) {
   # - deal with several positive answers, rank by extension
   # query the files/folder at repo root
   rep <- slash_split(repos)
+  rep$ref <- gh_fix_ref(rep$ref)
   gh_list <- gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   # extract the flatten chr list
@@ -117,6 +135,7 @@ slash_split <- function(repos) {
 
 fetch_desc <- function(repos) {
   rep <- slash_split(repos)
+  rep$ref <- gh_fix_ref(rep$ref)
   gh_desc <- gh("GET /repos/:owner/:repo/contents/DESCRIPTION/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   desc <- readLines(gh_desc$download_url)
@@ -141,7 +160,7 @@ compare_sha1 <- function(a, b) {
 #'
 remote_version <- function(ref, sha) {
   if (sum(names(ref) != names(sha)) > 0) stop("names differs", call. = FALSE)
-  ref  <- strsplit(ref, "/")[[1]][3]
+  ref <- strsplit(ref, "/")[[1]][3]
   paste0(ref, "@",
          substr(sha, 1, 7))
 }
