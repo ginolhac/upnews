@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{local_version}
 \alias{local_version}
-\title{copies from r-lib/sessioninfo licence GPL/2}
+\title{modified from r-lib/sessioninfo licence GPL/2}
 \usage{
 local_version(desc)
 }
@@ -10,5 +10,5 @@ local_version(desc)
 \item{desc}{pkg description}
 }
 \description{
-copies from r-lib/sessioninfo licence GPL/2
+modified from r-lib/sessioninfo licence GPL/2
 }

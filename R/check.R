@@ -12,8 +12,11 @@ upnews <- function(debug = FALSE) {
     message("debug:")
     print(repos)
   }
+  # FIXME extract_gh should return user/repo
+  # clash if 2 users have same repo name
   local_sha <- extract_gh_sha1(gh_pkg)
   local_vers <- extract_version(gh_pkg)
+  # unlist unless I found a vapply with progress bar
   remote_sha <- unlist(get_remote_sha1(repos))
   outdated_repos <- compare_sha1(local_sha, remote_sha)
   message(paste0(length(outdated_repos), " outdated pkgs (", length(gh_pkg)," gh pkgs)"))

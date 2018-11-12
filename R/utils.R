@@ -28,7 +28,6 @@ extract_version <- function(desc) {
   vapply(desc, function(x) x$Version, character(1))
 }
 
-
 #' concatenate user/repo
 #'
 #' @param desc pkg description
@@ -75,7 +74,7 @@ get_last_date <- function(repos, sha1) {
   }, repos, sha1, SIMPLIFY = TRUE, USE.NAMES = TRUE)
 }
 
-#' copies from r-lib/sessioninfo licence GPL/2
+#' modified from r-lib/sessioninfo licence GPL/2
 #'
 #' @param desc pkg description
 #'
