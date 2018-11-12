@@ -4,11 +4,14 @@
 \alias{upnews}
 \title{fetch news from remote github repo}
 \usage{
-upnews()
+upnews(debug = FALSE)
+}
+\arguments{
+\item{debug}{boolean for displaying installed gh}
 }
 \value{
 a data.frame
 }
 \description{
-no argument are used
+fetch news from remote github repo
 }
