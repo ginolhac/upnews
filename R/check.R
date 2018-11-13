@@ -7,10 +7,12 @@
 #' @export
 upnews <- function(debug = FALSE) {
   gh_pkg <- local_gh_pkg()
-  repos <- get_user_repo(gh_pkg)
-  if (debug) print(repos)
   # FIXME extract_gh should return user/repo
   # clash if 2 users have same repo name
+  repos <- get_user_repo(gh_pkg)
+  # ref can be a commit, replace by its branch of origin
+  repos <- vapply(repos, gh_fix_ref, character(1))
+  if (debug) print(repos)
   local_sha <- extract_gh_sha1(gh_pkg)
   local_vers <- extract_version(gh_pkg)
   # unlist unless I found a vapply with progress bar
@@ -28,7 +30,7 @@ upnews <- function(debug = FALSE) {
       pkgs = trim_ref(repos[outdated_repos]),
       loc_version = local_vers[outdated_repos],
       gh_version = remote_vers,
-      local = local_version(gh_pkg[outdated_repos]),
+      local = local_version(repos[outdated_repos], local_sha[outdated_repos]),
       remote = remote_version(repos[outdated_repos], remote_sha[outdated_repos]),
       date = get_last_date(repos[outdated_repos], remote_sha[outdated_repos]),
       news = news, stringsAsFactors = FALSE)

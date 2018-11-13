@@ -28,8 +28,9 @@ test_that("without github API", {
                                              "d490355@1234567",
                                              "d490355@64c4a56"))
   expect_error(remote_version(reps, bad_sha), "names differs")
-  expect_equal(local_version(pkgs), c(bifag = "d490355@d490355)",
-                                      credentials = "c9a41977adfd415075c18744186bcc7f30bfcc4c@c9a4197)"
+  expect_equal(local_version(reps, shas), c(bifag = "d490355@362992a",
+                                            karate = "master@1234567",
+                                      credentials = "c9a41977adfd415075c18744186bcc7f30bfcc4c@64c4a56"
   ))
   expect_equal(get_user_repo(pkgs), c(bifag = "ginolhac/bifag/d490355",
                                       credentials = "jeroen/credentials/c9a41977adfd415075c18744186bcc7f30bfcc4c"))
@@ -50,4 +51,20 @@ test_that("without github API", {
                                           news = character(0)),
                                      class = "data.frame",
                                      row.names = integer(0)))
+  expect_equal(slash_split("repo/contents/DESCRIPTION"),
+               list(user = "repo", repo = "contents", ref = "DESCRIPTION"))
+  expect_error(slash_split("repo/contents"))
+
+})
+
+test_that("GitHub API queries", {
+
+  skip_on_cran()
+  # skip offline
+
+  expect_true(is_on_branch(slash_split("ginolhac/upnews/ac1b768"), "master"))
+  expect_false(is_on_branch(slash_split("ginolhac/upnews/ac1b768"), "dev"))
+  expect_equal(gh_fix_ref("ginolhac/upnews/master"), "ginolhac/upnews/master")
+  expect_equal(gh_fix_ref("ginolhac/upnews/ac1b768"), "ginolhac/upnews/master")
+  expect_equal(gh_fix_ref("ginolhac/upnews/31a5300"), "ginolhac/upnews/dev")
 })
