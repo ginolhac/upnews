@@ -7,7 +7,8 @@ test_that("we can run the function and get back a dat frame", {
 context("utils")
 
 test_that("without github API", {
-  pkgs <- readRDS(system.file("test", "outdated_pks.rds", package = "upnews", mustWork = TRUE))
+  pkgs <- readRDS(system.file("test", "outdated_pks.rds",
+                              package = "upnews", mustWork = TRUE))
   reps <- c(bifag = "ginolhac/bifag/d490355",
             karate = "farina/karate/master",
             credentials = "jeroen/credentials/c9a41977adfd415075c18744186bcc7f30bfcc4c")
@@ -20,9 +21,16 @@ test_that("without github API", {
   bad_sha <- c(bifag = "362992a662f529709aa4a1063cad798c525f31ee",
                karatee = "1234567",
                credentials = "64c4a565cf678c8d28fcd7155d76960840078ac0")
-  expect_equal(slash_split(reps[2]), list(user = "farina", repo = "karate", ref = "master"))
-  expect_equal(remote_version(reps, shas), c("d490355@362992a", "d490355@1234567", "d490355@64c4a56"))
+  expect_equal(slash_split(reps[2]), list(user = "farina",
+                                          repo = "karate",
+                                          ref = "master"))
+  expect_equal(remote_version(reps, shas), c("d490355@362992a",
+                                             "d490355@1234567",
+                                             "d490355@64c4a56"))
   expect_error(remote_version(reps, bad_sha), "names differs")
+  expect_equal(local_version(pkgs), c(bifag = "d490355@d490355)",
+                                      credentials = "c9a41977adfd415075c18744186bcc7f30bfcc4c@c9a4197)"
+  ))
   expect_equal(get_user_repo(pkgs), c(bifag = "ginolhac/bifag/d490355",
                                       credentials = "jeroen/credentials/c9a41977adfd415075c18744186bcc7f30bfcc4c"))
   expect_equal(extract_version(pkgs), c(bifag = "0.1.3.990", credentials = "0.1"))
@@ -30,4 +38,16 @@ test_that("without github API", {
                                         credentials = "c9a41977adfd415075c18744186bcc7f30bfcc4c"))
   expect_error(compare_sha1(shas, bad_sha), "vectors differ")
   expect_equal(compare_sha1(shas, shas2), c("karate", "credentials"))
+  expect_equal(trim_ref(reps), c(bifag = "ginolhac/bifag",
+                                 karate = "farina/karate",
+                                 credentials = "jeroen/credentials"))
+  expect_equal(empty_df(), structure(list(pkgs = character(0),
+                                          loc_version = character(0),
+                                          gh_version = character(0),
+                                          local = character(0),
+                                          remote = character(0),
+                                          date = character(0),
+                                          news = character(0)),
+                                     class = "data.frame",
+                                     row.names = integer(0)))
 })

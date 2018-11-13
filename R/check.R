@@ -8,10 +8,7 @@
 upnews <- function(debug = FALSE) {
   gh_pkg <- local_gh_pkg()
   repos <- get_user_repo(gh_pkg)
-  if (debug) {
-    message("debug:")
-    print(repos)
-  }
+  if (debug) print(repos)
   # FIXME extract_gh should return user/repo
   # clash if 2 users have same repo name
   local_sha <- extract_gh_sha1(gh_pkg)
@@ -19,16 +16,10 @@ upnews <- function(debug = FALSE) {
   # unlist unless I found a vapply with progress bar
   remote_sha <- unlist(get_remote_sha1(repos))
   outdated_repos <- compare_sha1(local_sha, remote_sha)
-  message(paste0(length(outdated_repos), " outdated pkgs (", length(gh_pkg)," gh pkgs)"))
+  message(paste0(length(outdated_repos),
+                 " outdated pkgs (", length(gh_pkg)," gh pkgs)"))
   if (length(outdated_repos) == 0) {
-    df_news <- data.frame(
-      pkgs = character(0),
-      loc_version = character(0),
-      gh_version = character(0),
-      local = character(0),
-      remote = character(0),
-      date = character(0),
-      news = character(0), stringsAsFactors = FALSE)
+    df_news <- empty_df()
   } else {
     message("fetching news...")
     news <- unlist(lapply(repos[outdated_repos], fetch_news))

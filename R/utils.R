@@ -60,6 +60,14 @@ gh_fix_ref <- function(ref) {
     # https://stackoverflow.com/a/468378/1395352
     # deal with a commit, surely, check if it is a ref
     # quick and dirty fix, use master
+    # TODO https://stackoverflow.com/a/23970412/1395352
+    t1 <- gh::gh("GET /repos/ginolhac/upnews/compare/master...ac1b768")
+    if (t1$status %in% c("behind", "identical") ) {
+      "branch master"
+    } else if (t1$status %in% c("diverged", "ahead")) {
+      "not this branch"
+    }
+    t2 <- gh::gh("GET /repos/ginolhac/upnews/compare/dev...ac1b768")
     ref <- "master"
   }
   ref
@@ -114,8 +122,8 @@ fetch_news <- function(repos) {
     message(paste("no news for", repos))
     return(NA)
   } else if (length(news_idx) > 1) {
-    message(paste("multiple news for", repos))
-    # give chance
+    # message(paste("multiple news for", repos))
+    # might be used if grep is only news without extension
   } else {
     remote_list[news_idx]
     # get download url and read news files
@@ -162,4 +170,15 @@ remote_version <- function(ref, sha) {
   ref <- strsplit(ref, "/")[[1]][3]
   paste0(ref, "@",
          substr(sha, 1, 7))
+}
+
+empty_df <- function() {
+  data.frame(
+    pkgs = character(0),
+    loc_version = character(0),
+    gh_version = character(0),
+    local = character(0),
+    remote = character(0),
+    date = character(0),
+    news = character(0), stringsAsFactors = FALSE)
 }

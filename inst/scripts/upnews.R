@@ -1,13 +1,14 @@
 local({
-  if (RStudio.Version()[["version"]] < "1.1.57") stop("RStudio version >= 1.1.57 is required", call. = FALSE)
-
+  if (RStudio.Version()[["version"]] < "1.1.57") {
+    stop("RStudio version >= 1.1.57 is required", call. = FALSE)
+  }
 
   stopifnot(requireNamespace("miniUI"), requireNamespace("shiny"))
 
   ui <- miniUI::miniPage(
     miniUI::gadgetTitleBar("NEWS of outdated github packages",
                            left = NULL, # remove the cancel button
-                           # from https://github.com/gadenbuie/regexplain/blob/master/R/regex_help.R
+      # from https://github.com/gadenbuie/regexplain/blob/master/R/regex_help.R
                            right = miniUI::miniTitleBarButton("done", "Close", TRUE)
     ),
     miniUI::miniContentPanel(
@@ -19,9 +20,12 @@ local({
           shiny::column(4,
                         shiny::actionButton("install", "Update",
                                             style = "color: #fff; background-color: #337ab7; border-color: #2e6da4",
-                                            icon = shiny::icon("pause"), width = "100%")
+                                            icon = shiny::icon("pause"),
+                                            width = "100%")
           ),
-          shiny::column(4, shiny::actionButton("refresh", "refresh", icon = shiny::icon("sync-alt"), width = "100%")
+          shiny::column(4, shiny::actionButton("refresh", "refresh",
+                                               icon = shiny::icon("sync-alt"),
+                                               width = "100%")
           )
         )
       )
@@ -35,16 +39,20 @@ local({
       if (nrow(up) == 0) {
         return(up)
       }
-      pkgs <- vapply(up$pkgs, function(x) strsplit(x, split = "/")[[1]][1], character(1))
+      pkgs <- vapply(up$pkgs, function(x) strsplit(x, split = "/")[[1]][2], character(1))
       # click on links should not trigger row selection
       # thanks to https://stackoverflow.com/a/51146489/1395352
       stop_propagation <- "' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>"
-      pkgs <- paste0("<a href='https://github.com/", up$pkgs, stop_propagation, pkgs, "</a>")
+      pkgs <- paste0("<a href='https://github.com/",
+                     up$pkgs, stop_propagation,
+                     pkgs,
+                     "</a>")
       up$repo <- up$pkgs
       up$pkgs <- pkgs
       up$news <- ifelse(!is.na(up$news),
                         paste0("<a href='", up$news, stop_propagation,
-                               as.character(shiny::icon("file-alt", "fa-2x")), "</a>"),
+                               as.character(shiny::icon("file-alt", "fa-2x")),
+                               "</a>"),
                         as.character(shiny::icon("times", "fa-2x")))
       up
     })
@@ -60,7 +68,8 @@ local({
       columnDefs = list(list(className = 'dt-center', targets = "_all"),
                         # hide some columns
                         list(visible = FALSE, targets = c(3, 4, 7))),
-      # display info summary, table, and pagination. Not filtering and length control
+      # display info summary, table, and pagination.
+      # Not filtering and length control
       dom = "itp",
       # from https://github.com/daattali/addinslist
       language = list(
@@ -76,7 +85,7 @@ local({
       # thanks to SBista https://stackoverflow.com/a/40634033/1395352
       rowCallback = DT::JS(
         "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-          "$('td:eq(0)', nRow).attr('title', aData[7]);",  # use $('td', nRow).attr for entire row
+          "$('td:eq(0)', nRow).attr('title', aData[7]);",
           "$('td:eq(1)', nRow).attr('title', aData[3]);",
           "$('td:eq(2)', nRow).attr('title', aData[4]);",
         "}")
@@ -94,9 +103,11 @@ local({
     # so when all rows are deselected, NULL value is also triggered
     shiny::observeEvent(input$table_rows_selected, ignoreNULL = FALSE, {
       if ( is.null(input$table_rows_selected) ) {
-        shiny::updateActionButton(session, "install", "Update", icon = shiny::icon("pause"))
+        shiny::updateActionButton(session, "install", "Update",
+                                  icon = shiny::icon("pause"))
       } else {
-        shiny::updateActionButton(session, "install", paste("Update", nb_selected(), "package(s)"),
+        shiny::updateActionButton(session, "install",
+                                  paste("Update", nb_selected(), "package(s)"),
                            icon = shiny::icon("download"))
         }
       })
@@ -109,12 +120,17 @@ local({
       }
       plural <- ifelse(nb_selected() == 1, "package", "packages")
       if ( !requireNamespace("remotes", quietly = TRUE)) {
-        rstudioapi::showDialog("Error", "Remotes is not installed", "https://github.com/r-lib/remotes")
+        rstudioapi::showDialog("Error",
+                               "Remotes is not installed",
+                               "https://github.com/r-lib/remotes")
         return()
       } else {
         if (!rstudioapi::showQuestion(title = "Confirm", ok = "OK",
-                                      cancel = "Cancel", paste0("Are you sure you want to update ",
-                                                               nb_selected(), " ", plural, "?"))) return()
+                                      cancel = "Cancel",
+                                      paste0("Are you sure you want to update ",
+                                             nb_selected(), " ", plural, "?"))) {
+          return()
+        }
         split_at <- function(x) strsplit(x, split = "@")[[1]][1]
         pkgs <- vapply(up()$local[input$table_rows_selected], split_at, character(1))
         refs <- vapply(up()$remote[input$table_rows_selected], split_at, character(1))
@@ -129,7 +145,7 @@ local({
       shiny::stopApp()
     })
   }
-  #viewer <- shiny::paneViewer(700)
-  shiny::runGadget(ui, server, viewer = shiny::dialogViewer("upnews", width = 800, height = 600))
+  shiny::runGadget(ui, server,
+                   viewer = shiny::dialogViewer("upnews", width = 800, height = 600))
 
 })
