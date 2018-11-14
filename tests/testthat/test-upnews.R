@@ -1,7 +1,10 @@
 context("basic functionality")
 # based on https://github.com/hrbrmstr/dtupdate/tree/master/tests/testthat
 test_that("we can run the function and get back a dat frame", {
+  un <- upnews()
   expect_that(upnews(), is_a("data.frame"))
+  expect_equal(colnames(un), c("pkgs", "loc_version", "gh_version",
+                              "local", "remote", "date", "news"))
 })
 
 context("utils")
@@ -67,4 +70,9 @@ test_that("GitHub API queries", {
   expect_equal(gh_fix_ref("ginolhac/upnews/master"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/ac1b768"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/31a5300"), "ginolhac/upnews/dev")
+  expect_equal(fetch_news("ginolhac/rescueMisReadIndex/master"), NA)
+  expect_equal(fetch_news("ginolhac/upnews/master"),
+               "https://raw.githubusercontent.com/ginolhac/upnews/master/NEWS.md")
+  # version must be only letters and dot
+  expect_true(grepl("^[0-9\\.]+$", fetch_desc("ginolhac/upnews/master")))
 })

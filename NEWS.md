@@ -15,6 +15,7 @@
 ### Bug fix
 
 * clicks on links don't trigger the row selection
+* GitHub$Ref could be a commit sha1, fix it with its branch of origin
 
 ## version 0.1
 
