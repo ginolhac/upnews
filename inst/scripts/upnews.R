@@ -65,7 +65,7 @@ local({
     class = "cell-border stripe",
     options = list(
       # align center for all columns
-      columnDefs = list(list(className = 'dt-center', targets = "_all"),
+      columnDefs = list(list(className = "dt-center", targets = "_all"),
                         # hide some columns
                         list(visible = FALSE, targets = c(3, 4, 7))),
       # display info summary, table, and pagination.
@@ -102,7 +102,7 @@ local({
     # be default, ignoreNULL is TRUE, Victor Perrier pointed me out this option
     # so when all rows are deselected, NULL value is also triggered
     shiny::observeEvent(input$table_rows_selected, ignoreNULL = FALSE, {
-      if ( is.null(input$table_rows_selected) ) {
+      if (is.null(input$table_rows_selected)) {
         shiny::updateActionButton(session, "install", "Update",
                                   icon = shiny::icon("pause"))
       } else {
@@ -113,13 +113,13 @@ local({
       })
     shiny::observeEvent(input$install, ignoreNULL = FALSE, {
       # warning is nothing is selected but only when selection has occured
-      if ( is.null(input$table_rows_selected) && !is.null(input$table_row_last_clicked)) {
+      if (is.null(input$table_rows_selected) && !is.null(input$table_row_last_clicked)) {
         rstudioapi::showDialog("Warning",
                                "Nothing is selected")
         return()
       }
       plural <- ifelse(nb_selected() == 1, "package", "packages")
-      if ( !requireNamespace("remotes", quietly = TRUE)) {
+      if (!requireNamespace("remotes", quietly = TRUE)) {
         rstudioapi::showDialog("Error",
                                "Remotes is not installed",
                                "https://github.com/r-lib/remotes")

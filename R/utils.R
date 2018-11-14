@@ -34,8 +34,8 @@ extract_version <- function(desc) {
 #' @param desc pkg description
 get_user_repo <- function(desc) {
   vapply(desc, function(x) {
-    paste0(x$GithubUsername, "/", x$GithubRepo, "/", x$GithubRef)
-  }, character(1))
+    paste0(x$GithubUsername, "/", x$GithubRepo, "/", x$GithubRef)},
+    character(1))
 }
 
 slash_split <- function(repos) {
@@ -63,13 +63,12 @@ gh_fix_ref <- function(rep) {
   # refs work only it is a branch
   # check if ref is commit and fix to replace by the its branch of origin
   # https://stackoverflow.com/a/468378/1395352
-  if (grepl("[0-9a-f]{7,40}", rep$ref)) {# c("d490355", "master", "dev", "cc2db095e9dcfc52346c1ffeeb84a0e13f12c22a")
+  if (grepl("[0-9a-f]{7,40}", rep$ref)) {
     # procedure as in https://stackoverflow.com/a/23970412/1395352
     # list all branchs with:
     branches <- gh("GET /repos/:owner/:repo/branches", owner = rep$user, repo = rep$repo)
     branch_names <- unlist(lapply(branches, function(x) x$name))
     for (branch in branch_names) {
-      #message(paste("testing", branch, rep$ref))
       if (isTRUE(is_on_branch(rep, branch))) {
         new_ref <- branch
         break()

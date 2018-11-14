@@ -63,7 +63,7 @@ test_that("without github API", {
 test_that("GitHub API queries", {
 
   skip_on_cran()
-  skip_on_travis() # not enough queries
+
   # skip offline
   # using dormant rescueMisReadIndex repo
   expect_equal(get_remote_sha1("ginolhac/rescueMisReadIndex/master")[[1]],
@@ -89,9 +89,7 @@ test_that("GitHub API queries", {
 test_that("github_release", {
 
   skip_on_cran()
-  skip_on_travis()
   #skip_if_offline()
-  #skip_if_over_rate_limit()
 
   Sys.unsetenv("R_TESTS")
 
@@ -111,6 +109,7 @@ test_that("github_release", {
   expect_equal(packageDescription("falsy", lib.loc = lib)$RemoteRepo, "falsy")
   # now test upnews, should have only one outdated pkg
   un <- upnews(lib = lib)
+  expect_message(upnews(debug = TRUE), "debug:")
   expect_equal(attributes(un)$gh_pkg, 1L)
   expect_equal(attributes(un)$row.names, "falsy")
   expect_equal(nrow(un), 1L)

@@ -5,10 +5,14 @@ sudo: false
 cache: packages
 
 r:
-- 3.3
-- oldrel
-- release
-- devel
+  - 3.3
+  - oldrel
+  - release
+  - devel
+
+before_install:
+  # after defining token in https://travis-ci.org/ginolhac/upnews/settings
+  - echo "GITHUB_PAT=$GITHUB_PAT" > ~/.Renviron
 
 after_success:
   - Rscript -e 'covr::codecov()'

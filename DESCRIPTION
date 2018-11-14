@@ -1,6 +1,6 @@
 Package: upnews
 Type: Package
-Title: Display news for outdated GitHub packages
+Title: Display news and upgrade outdated GitHub packages
 Version: 0.1.1
 Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")))
 Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
@@ -9,8 +9,8 @@ Description: This add-in will fetch the remote HEAD sha1 of local github package
     If some packages are outdated, fetch and display a link to a NEWS file (case insensitive NEWS.md).
 Depends: R (>= 3.3.0)
 Imports:
-  pbapply,
-  gh
+    pbapply,
+    gh
 Suggests:
     DT,
     remotes,
@@ -21,7 +21,7 @@ Suggests:
     testthat,
     covr
 Enhances:
-  tibble
+    tibble
 License: Apache License (>= 2.0)
 URL: https://github.com/ginolhac/upnews
 BugReports: https://github.com/ginolhac/upnews/issues

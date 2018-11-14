@@ -13,14 +13,17 @@ upnews <- function(lib = NULL, debug = FALSE) {
   repos <- get_user_repo(gh_pkg)
   # ref can be a commit, replace by its branch of origin
   repos <- vapply(repos, gh_fix_ref, character(1))
-  if (debug) print(repos)
+  if (debug) {
+    message("debug:")
+    print(repos)
+  }
   local_sha <- extract_gh_sha1(gh_pkg)
   local_vers <- extract_version(gh_pkg)
   # unlist unless I found a vapply with progress bar
   remote_sha <- unlist(get_remote_sha1(repos))
   outdated_repos <- compare_sha1(local_sha, remote_sha)
   message(paste0(length(outdated_repos),
-                 " outdated pkgs (", length(gh_pkg)," gh pkgs)"))
+                 " outdated pkgs (", length(gh_pkg), " gh pkgs)"))
   if (length(outdated_repos) == 0) {
     df_news <- empty_df()
   } else {
@@ -42,6 +45,3 @@ upnews <- function(lib = NULL, debug = FALSE) {
   if (requireNamespace("tibble", quietly = TRUE)) requireNamespace("tibble")
   df_news
 }
-
-
-
