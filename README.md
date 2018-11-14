@@ -88,6 +88,7 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 - this [SO answer](https://stackoverflow.com/a/23970412/1395352) for fixing the issue with commit sha as reference
 - [regexplain](https://github.com/gadenbuie/regexplain) by @gabenbuie for inspiration in the addin design
 - [addinslist](https://github.com/daattali/addinslist) by @daattali for inspiration in the addin design
+- [remotes](https://github.com/r-lib/remotes/blob/master/tests/testthat/test-install-github.R) for appropriate testing
 - @koncina and @Pakillo for testing and suggestions
 
 ### TODO
