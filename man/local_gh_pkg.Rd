@@ -4,7 +4,10 @@
 \alias{local_gh_pkg}
 \title{extract local github packages}
 \usage{
-local_gh_pkg()
+local_gh_pkg(lib)
+}
+\arguments{
+\item{lib}{path to lib}
 }
 \description{
 extract local github packages

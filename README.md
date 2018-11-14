@@ -41,7 +41,7 @@ If the `Ref` is a commit, all branches are tested to find out from which branch 
 
 ``` r
 > upnews::upnews()
-fetching distant sha1
+fetching 23 distant sha1
    |++++++++++++++++++++++++++++++++++++++++++++++++++| 100% elapsed = 05s
 4 outdated pkgs (23 gh pkgs)
 fetching news...

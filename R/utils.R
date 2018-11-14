@@ -7,9 +7,10 @@ NULL
 
 #' extract local github packages
 #'
-local_gh_pkg <- function() {
-  pkgs <- row.names(utils::installed.packages())
-  desc <- lapply(setNames(pkgs, nm = pkgs), utils::packageDescription)
+#' @param lib path to lib
+local_gh_pkg <- function(lib) {
+  pkgs <- row.names(utils::installed.packages(lib.loc = lib))
+  desc <- lapply(setNames(pkgs, nm = pkgs), utils::packageDescription, lib.loc = lib)
   gh_pkg <- vapply(desc, function(x) !is.null(x$GithubSHA1), logical(1))
   desc[gh_pkg]
 }
@@ -48,7 +49,7 @@ slash_split <- function(repos) {
 #'
 #' @param repos pkg user/repo
 get_remote_sha1 <- function(repos) {
-  message("fetching distant sha1")
+  message(paste("fetching",  length(repos), "distant sha1"))
   pblapply(repos, function(x) {
     rep <- slash_split(x)
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",

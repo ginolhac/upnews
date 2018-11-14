@@ -1,12 +1,13 @@
 #' fetch news from remote github repo
 #'
+#' @param lib path to local lib
 #' @param debug boolean for displaying installed gh
 #'
 #' @return a data.frame
 #'
 #' @export
-upnews <- function(debug = FALSE) {
-  gh_pkg <- local_gh_pkg()
+upnews <- function(lib = NULL, debug = FALSE) {
+  gh_pkg <- local_gh_pkg(lib)
   # FIXME extract_gh should return user/repo
   # clash if 2 users have same repo name
   repos <- get_user_repo(gh_pkg)

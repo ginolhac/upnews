@@ -64,7 +64,13 @@ test_that("GitHub API queries", {
 
   skip_on_cran()
   # skip offline
-
+  # using dormant rescueMisReadIndex repo
+  expect_equal(get_remote_sha1("ginolhac/rescueMisReadIndex/master")[[1]],
+               "253f47a6da1f8209eee4f97f83b2151b4b155b63")
+  expect_equal(get_last_date("ginolhac/rescueMisReadIndex/master", "253f47a6da1f8209eee4f97f83b2151b4b155b63"),
+               c(`ginolhac/rescueMisReadIndex/master` = "2013-06-12"))
+  expect_equal(get_last_date("ginolhac/rescueMisReadIndex/master", "253f47a"),
+               c(`ginolhac/rescueMisReadIndex/master` = "2013-06-12"))
   expect_true(is_on_branch(slash_split("ginolhac/upnews/ac1b768"), "master"))
   expect_false(is_on_branch(slash_split("ginolhac/upnews/ac1b768"), "dev"))
   expect_equal(gh_fix_ref("ginolhac/upnews/master"), "ginolhac/upnews/master")
@@ -75,4 +81,40 @@ test_that("GitHub API queries", {
                "https://raw.githubusercontent.com/ginolhac/upnews/master/NEWS.md")
   # version must be only letters and dot
   expect_true(grepl("^[0-9\\.]+$", fetch_desc("ginolhac/upnews/master")))
+})
+
+# from https://github.com/r-lib/remotes/blob/master/tests/testthat/test-install-github.R
+# L54
+test_that("github_release", {
+
+  skip_on_cran()
+  #skip_if_offline()
+  #skip_if_over_rate_limit()
+
+  Sys.unsetenv("R_TESTS")
+
+  lib <- tempfile()
+  on.exit(unlink(lib, recursive = TRUE), add = TRUE)
+  dir.create(lib)
+
+  remotes::install_github(
+    "gaborcsardi/falsy",
+    # get outdated version
+    ref = "2db22022d08cad450aa2d9325cc3bb1ac88c5eba",
+    lib = lib,
+    quiet = TRUE
+  )
+
+  expect_silent(packageDescription("falsy", lib.loc = lib))
+  expect_equal(packageDescription("falsy", lib.loc = lib)$RemoteRepo, "falsy")
+  # now test upnews, should have only one outdated pkg
+  un <- upnews(lib = lib)
+  expect_equal(attributes(un)$gh_pkg, 1L)
+  expect_equal(attributes(un)$row.names, "falsy")
+  expect_equal(nrow(un), 1L)
+  expect_equal(un$loc_version, "1.0")
+  expect_equal(un$local, "master@2db2202")
+  expect_false(un$local == un$remote)
+  # might remove this one if Gabor creates one!
+  expect_equal(un$news, NA)
 })

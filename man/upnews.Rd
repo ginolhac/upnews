@@ -4,9 +4,11 @@
 \alias{upnews}
 \title{fetch news from remote github repo}
 \usage{
-upnews(debug = FALSE)
+upnews(lib = NULL, debug = FALSE)
 }
 \arguments{
+\item{lib}{path to local lib}
+
 \item{debug}{boolean for displaying installed gh}
 }
 \value{
