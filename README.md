@@ -61,11 +61,14 @@ no news for jeroen/credentials/master
 - in the console, a progress bar display the retrieval of remote HEAD
 - finally a [`DataTable`](https://rstudio.github.io/DT/) output in the viewer is displayed such as:
 
-![](docs/screenshot.png)
+![screenshot](docs/screenshot.png)
 
 - the package name has a pophover text with `user/pkg` and a link to the GitHub repo
 - local version is from the DESCRIPTION local file, and a pophover text displays `branch/commit`
 - remote version is from the DESCRIPTION remote file, and a pophover text displays `branch/commit`
+
+
+![demo gif](docs/demo.gif)
 
 ### increase limits to the GITHUB API
 
@@ -95,6 +98,7 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 
 - smarter search for news
 - knit NEWS.md and display in Viewer pane
+- tests add-in (`shinytest`)
 - use `cli` for console output
 - is it useful since `remotes` v2.0.1 allows an interactive upgrade?
 
