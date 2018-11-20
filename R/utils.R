@@ -52,7 +52,6 @@ get_remote_sha1 <- function(repos) {
   message(paste("fetching",  length(repos), "distant sha1"))
   pblapply(repos, function(x) {
     rep <- slash_split(x)
-    rep$ref <- validate_branche(rep)
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",
        owner = rep$user, repo = rep$repo, ref = rep$ref)[["object"]][["sha"]]
   })
@@ -77,8 +76,11 @@ gh_fix_ref <- function(rep) {
       #else {message("not found")}
     }
   } else new_ref <- rep$ref
+  rep$ref <- new_ref
+  # check if ref is a valid branch
+  rep$ref <- validate_branche(rep)
   # rebuild string with fixed ref which a branch now
-  paste(c(rep$user, rep$rep, new_ref), collapse = "/")
+  paste(rep, collapse = "/")
 }
 
 is_on_branch <- function(rep, branch) {
@@ -129,7 +131,6 @@ fetch_news <- function(repos) {
   # - deal with several positive answers, rank by extension
   # query the files/folder at repo root
   rep <- slash_split(repos)
-  rep$ref <- validate_branche(rep)
   gh_list <- gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   # extract the flatten chr list
@@ -152,10 +153,9 @@ fetch_news <- function(repos) {
 
 fetch_desc <- function(repos) {
   rep <- slash_split(repos)
-  rep$ref <- validate_branche(rep)
   gh_desc <- gh("GET /repos/:owner/:repo/contents/DESCRIPTION/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
-  desc <- readLines(gh_desc$download_url)
+  desc <- readLines(gh_desc$download_url, warn = FALSE)
   version <- desc[grep("^Version:", desc)]
   strsplit(version, " ")[[1]][2]
 }
