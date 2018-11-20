@@ -52,6 +52,7 @@ get_remote_sha1 <- function(repos) {
   message(paste("fetching",  length(repos), "distant sha1"))
   pblapply(repos, function(x) {
     rep <- slash_split(x)
+    rep$ref <- validate_branche(rep)
     gh("GET /repos/:owner/:repo/git/refs/heads/:ref",
        owner = rep$user, repo = rep$repo, ref = rep$ref)[["object"]][["sha"]]
   })
@@ -128,6 +129,7 @@ fetch_news <- function(repos) {
   # - deal with several positive answers, rank by extension
   # query the files/folder at repo root
   rep <- slash_split(repos)
+  rep$ref <- validate_branche(rep)
   gh_list <- gh("GET /repos/:owner/:repo/contents/:path/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   # extract the flatten chr list
@@ -150,6 +152,7 @@ fetch_news <- function(repos) {
 
 fetch_desc <- function(repos) {
   rep <- slash_split(repos)
+  rep$ref <- validate_branche(rep)
   gh_desc <- gh("GET /repos/:owner/:repo/contents/DESCRIPTION/?ref=:ref",
                     owner = rep$user, repo = rep$repo, path = ".", ref = rep$ref)
   desc <- readLines(gh_desc$download_url)
@@ -188,4 +191,17 @@ empty_df <- function() {
     remote = character(0),
     date = character(0),
     news = character(0), stringsAsFactors = FALSE)
+}
+
+#' @importFrom gh gh
+validate_branche <- function(rep) {
+  branches <- unlist(lapply(
+    X = gh("/repos/:owner/:repo/branches", repo = rep$repo, owner = rep$user),
+    FUN = `[[`, "name"
+  ))
+  if (rep$ref %in% branches) {
+    rep$ref
+  } else {
+    branches[1]
+  }
 }
