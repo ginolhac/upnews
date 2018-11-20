@@ -3,7 +3,12 @@ local({
     stop("RStudio version >= 1.1.57 is required", call. = FALSE)
   }
 
-  stopifnot(requireNamespace("miniUI"), requireNamespace("shiny"))
+  stopifnot(
+    requireNamespace("miniUI"),
+    requireNamespace("shiny"),
+    requireNamespace("shinycssloaders"),
+    requireNamespace("DT")
+  )
 
   ui <- miniUI::miniPage(
     miniUI::gadgetTitleBar("NEWS of outdated github packages",
