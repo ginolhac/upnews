@@ -140,11 +140,16 @@ local({
         repo <- up()$repo[input$table_rows_selected]
         refs <- vapply(up()$remote[input$table_rows_selected], split_at, character(1))
         to_upgrade <- paste(repo, refs, sep = "@")
+        shiny::showModal(shiny::modalDialog(paste(repo, collapse = " "),
+                                            title = "Upgrading...",
+                                            size = "l",
+                                            footer = NULL))
         if (input$deps) {
           utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never", dependencies = TRUE)
         } else {
-          utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never")
+            utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never")
         }
+        shiny::removeModal()
         # refresh once installed
         session$reload()
       }
