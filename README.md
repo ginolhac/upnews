@@ -1,6 +1,7 @@
 # upnews
 
 [![Travis-CI Build Status](https://travis-ci.org/ginolhac/upnews.svg?branch=master)](https://travis-ci.org/ginolhac/upnews)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ginolhac/upnews?branch=master&svg=true)](https://ci.appveyor.com/project/ginolhac/upnews)
 [![Coverage status](https://codecov.io/gh/ginolhac/upnews/branch/master/graph/badge.svg)](https://codecov.io/github/ginolhac/upnews?branch=master)
 
 **Display news and upgrade outdated GitHub packages**

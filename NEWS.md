@@ -16,6 +16,7 @@
 
 * clicks on links don't trigger the row selection
 * GitHub$Ref could be a commit sha1, fix it with its branch of origin
+* a local ref could be absent in remotes (thanks @pvictor #6)
 
 ## version 0.1
 

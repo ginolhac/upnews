@@ -57,6 +57,8 @@ test_that("without github API", {
   expect_equal(slash_split("repo/contents/DESCRIPTION"),
                list(user = "repo", repo = "contents", ref = "DESCRIPTION"))
   expect_error(slash_split("repo/contents"))
+  expect_equal(validate_branche(slash_split("ginolhac/upnews/master")), "master")
+  expect_equal(validate_branche(slash_split("ginolhac/upnews/masterrr")), "dev")
 
 })
 
