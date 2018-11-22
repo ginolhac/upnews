@@ -1,9 +1,10 @@
 # upnews
 
 [![Travis-CI Build Status](https://travis-ci.org/ginolhac/upnews.svg?branch=master)](https://travis-ci.org/ginolhac/upnews)
+[![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/ginolhac/upnews?branch=master&svg=true)](https://ci.appveyor.com/project/ginolhac/upnews)
 [![Coverage status](https://codecov.io/gh/ginolhac/upnews/branch/master/graph/badge.svg)](https://codecov.io/github/ginolhac/upnews?branch=master)
 
-**Display news and upgrade outdated GitHub packages**
+**Display news and upgrade outdated GitHub R packages**
 
 ## Motivation
 
@@ -92,6 +93,7 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 - [regexplain](https://github.com/gadenbuie/regexplain) by @gabenbuie for inspiration in the addin design
 - [addinslist](https://github.com/daattali/addinslist) by @daattali for inspiration in the addin design
 - [remotes](https://github.com/r-lib/remotes/blob/master/tests/testthat/test-install-github.R) for appropriate testing
+- @pvictor for contributing and insightful advice
 - @koncina and @Pakillo for testing and suggestions
 
 ### TODO
