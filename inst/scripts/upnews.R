@@ -140,7 +140,7 @@ local({
         repo <- up()$repo[input$table_rows_selected]
         refs <- vapply(up()$remote[input$table_rows_selected], split_at, character(1))
         to_upgrade <- paste(repo, refs, sep = "@")
-        shiny::showModal(shiny::modalDialog(paste(repo, collapse = " "),
+        shiny::showModal(shiny::modalDialog(HTML(paste(to_upgrade, collapse = "</br>")),
                                             title = "Upgrading...",
                                             size = "l",
                                             footer = NULL))
