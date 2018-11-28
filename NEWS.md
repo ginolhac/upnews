@@ -1,3 +1,8 @@
+## version 0.1.2
+
+* NEWS are now displayed within the app via modals
+* After upgrades, don't fetch again data, only if users choose to refresh
+
 ## version 0.1.1
 
 ### Features
@@ -11,7 +16,6 @@
     + column 2: local version (DESCRIPTION), popup: "ref@/sha1"
     + column 3: remote version (DESCRIPTION), popup: "ref@/sha1"
     
-
 ### Bug fix
 
 * clicks on links don't trigger the row selection

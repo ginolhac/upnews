@@ -59,14 +59,14 @@ no news for jeroen/credentials/master
 ### RStudio add-in
 
 - use the **upnews** link in the _Addins_ menu.
-- in the console, a progress bar display the retrieval of remote HEAD
+- in the console, a progress bar display the retrieval of remote `HEAD`
 - finally a [`DataTable`](https://rstudio.github.io/DT/) output in the viewer is displayed such as:
 
 ![screenshot](docs/screenshot.png)
 
 - the package name has a pophover text with `user/pkg` and a link to the GitHub repo
-- local version is from the DESCRIPTION local file, and a pophover text displays `branch/commit`
-- remote version is from the DESCRIPTION remote file, and a pophover text displays `branch/commit`
+- local version is from the `DESCRIPTION` **local** file, and a pophover text displays `branch/commit`
+- remote version is from the `DESCRIPTION` **remote** file, and a pophover text displays `branch/commit`
 
 
 ![demo gif](docs/demo.gif)
@@ -93,14 +93,13 @@ To authenticate yourself, you can follow the great [happygitwithr](http://happyg
 - [regexplain](https://github.com/gadenbuie/regexplain) by @gabenbuie for inspiration in the addin design
 - [addinslist](https://github.com/daattali/addinslist) by @daattali for inspiration in the addin design
 - [remotes](https://github.com/r-lib/remotes/blob/master/tests/testthat/test-install-github.R) for appropriate testing
-- @pvictor for contributing and insightful advice
-- @koncina and @Pakillo for testing and suggestions
+- [@pvictor](https://github.com/pvictor/) for contributing and insightful advices
+- [@koncina](https://github.com/kocina/) and [@Pakillo](https://github.com/Pakillo/) for testing and suggestions
+- [@AntoineGuillot2](https://github.com/AntoineGuillot2/) for his nice [tutorial](https://github.com/AntoineGuillot2/ButtonsInDataTable) about buttons in DT.
 
 ### TODO
 
 - smarter search for news
-- knit NEWS.md and display in Viewer pane
 - tests add-in (`shinytest`)
-- use `cli` for console output
 - is it useful since `remotes` v2.0.1 allows an interactive upgrade?
 

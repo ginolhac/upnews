@@ -13,7 +13,7 @@ local({
   ui <- miniUI::miniPage(
     miniUI::gadgetTitleBar("NEWS of outdated github packages",
                            left = NULL, # remove the cancel button
-      # from https://github.com/gadenbuie/regexplain/blob/master/R/regex_help.R
+                           # from https://github.com/gadenbuie/regexplain/blob/master/R/regex_help.R
                            right = miniUI::miniTitleBarButton("done", "Close", TRUE)
     ),
     miniUI::miniContentPanel(
@@ -21,6 +21,11 @@ local({
                                    proxy.height = "200px"),
       shiny::wellPanel(
         shiny::fluidRow(
+          # JS code from Antoine Guillot
+          # https://github.com/AntoineGuillot2/ButtonsInDataTable
+          shiny::tags$script("$(document).on('click', '#table button', function () {
+                    Shiny.onInputChange('lastClickId',this.id);
+                    Shiny.onInputChange('lastClick', Math.random())});"),
           shiny::column(4, shiny::checkboxInput("deps", "dependencies = TRUE")),
           shiny::column(4,
                         shiny::actionButton("install", "Update",
@@ -38,8 +43,10 @@ local({
   )
   server <- function(input, output, session) {
 
-    up <- shiny::reactive({
-      up <- upnews()
+    values <- shiny::reactiveValues(data = NULL,
+                                    gh_pkg = NULL)
+
+    gadgetized_table <- function(up) {
       # when all is up-to-date, just return the empty tibble
       if (nrow(up) == 0) {
         return(up)
@@ -54,16 +61,19 @@ local({
                      "</a>")
       up$repo <- up$pkgs
       up$pkgs <- pkgs
-      up$news <- ifelse(!is.na(up$news),
-                        paste0("<a href='", up$news, stop_propagation,
-                               as.character(shiny::icon("file-alt", "fa-2x")),
-                               "</a>"),
-                        as.character(shiny::icon("times", "fa-2x")))
+      up$news <- paste0('<div onmousedown="event.preventDefault(); event.stopPropagation(); return false;";>
+<button type="button" class="btn btn-primary render" id=',
+                        paste(up$repo, up$news, sep = "@"), '>NEWS</button></div>')
       up
-    })
+    }
+
 
     output$table <- DT::renderDT({
-      up()
+      # fetch only once data
+      if (is.null(values$data)) values$data <- upnews::upnews()
+      values$gh_pkg <- attributes(values$data)$gh_pkg
+      DT <- gadgetized_table(values$data)
+      DT
     },
     escape = FALSE,
     rownames = FALSE,
@@ -78,8 +88,8 @@ local({
       dom = "itp",
       # from https://github.com/daattali/addinslist
       language = list(
-        zeroRecords = paste0("up-to-date (", attributes(up())$gh_pkg, " gh pkgs)"),
-        info = paste("_TOTAL_ outdated /", attributes(up())$gh_pkg),
+        zeroRecords = paste0("up-to-date (", values$gh_pkg, " gh pkgs)"),
+        info = paste("_TOTAL_ outdated /", values$gh_pkg),
         infoFiltered = "",
         infoPostFix = " (click any row to select)",
         infoEmpty = "",
@@ -90,17 +100,33 @@ local({
       # thanks to SBista https://stackoverflow.com/a/40634033/1395352
       rowCallback = DT::JS(
         "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-          "$('td:eq(0)', nRow).attr('title', aData[7]);",
-          "$('td:eq(1)', nRow).attr('title', aData[3]);",
-          "$('td:eq(2)', nRow).attr('title', aData[4]);",
+        "$('td:eq(0)', nRow).attr('title', aData[7]);",
+        "$('td:eq(1)', nRow).attr('title', aData[3]);",
+        "$('td:eq(2)', nRow).attr('title', aData[4]);",
         "}")
-      )
     )
+    )
+    # idea from Victor Perrier and code modified from Antoine Guillot
+    # https://github.com/AntoineGuillot2/ButtonsInDataTable
+    news_modal <- function(clic) {
+      titre <- strsplit(clic, "@")[[1]][1]
+      url <- strsplit(clic, "@")[[1]][2]
+      msg <- ifelse(url == "NA", "<h2>no news</h2>", includeMarkdown(path = url))
+      modalDialog(
+        title = titre,
+        HTML(msg),
+        easyClose = TRUE,
+        footer = NULL
+      )
+    }
+    observeEvent(input$lastClick, {
+      showModal(news_modal(input$lastClickId))
+    })
 
     shiny::observeEvent(input$refresh, {
       session$reload()
     })
-      # return number of selected lines
+    # return number of selected lines
     nb_selected <- shiny::eventReactive(input$table_rows_selected, {
       length(input$table_rows_selected)
     })
@@ -113,32 +139,33 @@ local({
       } else {
         shiny::updateActionButton(session, "install",
                                   paste("Update", nb_selected(), "package(s)"),
-                           icon = shiny::icon("download"))
-        }
-      })
+                                  icon = shiny::icon("download"))
+      }
+    })
     shiny::observeEvent(input$install, ignoreNULL = FALSE, {
       # warning is nothing is selected but only when selection has occured
       if (is.null(input$table_rows_selected) && !is.null(input$table_row_last_clicked)) {
         rstudioapi::showDialog("Warning",
                                "Nothing is selected")
-        return()
+        return(NULL)
       }
       plural <- ifelse(nb_selected() == 1, "package", "packages")
       if (!requireNamespace("remotes", quietly = TRUE)) {
         rstudioapi::showDialog("Error",
                                "Remotes is not installed",
                                "https://github.com/r-lib/remotes")
-        return()
+        return(NULL)
       } else {
         if (!rstudioapi::showQuestion(title = "Confirm", ok = "OK",
                                       cancel = "Cancel",
                                       paste0("Are you sure you want to update ",
                                              nb_selected(), " ", plural, "?"))) {
-          return()
+          return(NULL)
         }
+        current <- gadgetized_table(values$data)
         split_at <- function(x) strsplit(x, split = "@")[[1]][1]
-        repo <- up()$repo[input$table_rows_selected]
-        refs <- vapply(up()$remote[input$table_rows_selected], split_at, character(1))
+        repo <- current$repo[input$table_rows_selected]
+        refs <- vapply(current$remote[input$table_rows_selected], split_at, character(1))
         to_upgrade <- paste(repo, refs, sep = "@")
         shiny::showModal(shiny::modalDialog(HTML(paste(to_upgrade, collapse = "</br>")),
                                             title = "Upgrading...",
@@ -147,13 +174,14 @@ local({
         if (input$deps) {
           utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never", dependencies = TRUE)
         } else {
-            utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never")
+          utils::getFromNamespace("install_github", "remotes")(to_upgrade, upgrade = "never")
         }
         shiny::removeModal()
-        # refresh once installed
-        session$reload()
+        # remove installed packages
+        values$data <- values$data[-input$table_rows_selected, ]
       }
     })
+
     shiny::observeEvent(input$done, {
       shiny::stopApp()
     })
