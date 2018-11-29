@@ -21,6 +21,8 @@ local({
                                    proxy.height = "200px"),
       shiny::wellPanel(
         shiny::fluidRow(
+          shiny::tags$head(shiny::tags$style(".fa-times {color:#ff4945}
+                                              .fa-file-alt {color:#75a3e7}")),
           # JS code from Antoine Guillot
           # https://github.com/AntoineGuillot2/ButtonsInDataTable
           shiny::tags$script("$(document).on('click', '#table button', function () {
@@ -62,8 +64,12 @@ local({
       up$repo <- up$pkgs
       up$pkgs <- pkgs
       up$news <- paste0('<div onmousedown="event.preventDefault(); event.stopPropagation(); return false;";>
-<button type="button" class="btn btn-primary render" id=',
-                        paste(up$repo, up$news, sep = "@"), '>NEWS</button></div>')
+<button type="button" class="btn btn-action_button " id=',
+                        paste(up$repo, up$news, sep = "@"), '>',
+                        ifelse(!is.na(up$news),
+                               '<i class=\"fa fa-file-alt fa-2x\"></i>',
+                               '<i class=\"fa fa-times fa-2x\"></i>'),
+                        '</button></div>')
       up
     }
 
@@ -168,6 +174,8 @@ local({
         refs <- vapply(current$remote[input$table_rows_selected], split_at, character(1))
         to_upgrade <- paste(repo, refs, sep = "@")
         shiny::showModal(shiny::modalDialog(HTML(paste(to_upgrade, collapse = "</br>")),
+                                            # modalDialog(withSpinner(tagList(renderPlot())))
+                                            # https://github.com/andrewsali/shinycssloaders/issues/14
                                             title = "Upgrading...",
                                             size = "l",
                                             footer = NULL))
