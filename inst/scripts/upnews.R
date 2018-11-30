@@ -40,6 +40,9 @@ local({
                                                width = "100%")
           )
         )
+      ),
+      shiny::tags$script(
+        "$(function () {$('body').tooltip({selector: '[data-toggle=\"tooltip\"]', container: 'body', animation: false});})"
       )
     )
   )
@@ -53,23 +56,54 @@ local({
       if (nrow(up) == 0) {
         return(up)
       }
-      pkgs <- vapply(up$pkgs, function(x) strsplit(x, split = "/")[[1]][2], character(1))
-      # click on links should not trigger row selection
-      # thanks to https://stackoverflow.com/a/51146489/1395352
-      stop_propagation <- "' target='_blank' onmousedown='event.preventDefault(); event.stopPropagation(); return false;';>"
-      pkgs <- paste0("<a href='https://github.com/",
-                     up$pkgs, stop_propagation,
-                     pkgs,
-                     "</a>")
+      pkgs <- unlist(lapply(
+        X = up$pkgs,
+        FUN = function(x) {
+          htmltools::doRenderTags(tags$a(
+            href = paste0("https://github.com/", x),
+            target = "_blank",
+            `data-toggle` = "tooltip", title = x,
+            onmousedown = "event.preventDefault(); event.stopPropagation(); return false;",
+            strsplit(x, split = "/")[[1]][2]
+          ))
+        }
+      ))
       up$repo <- up$pkgs
       up$pkgs <- pkgs
-      up$news <- paste0('<div onmousedown="event.preventDefault(); event.stopPropagation(); return false;";>
-<button type="button" class="btn btn-action_button " id=',
-                        paste(up$repo, up$news, sep = "@"), '>',
-                        ifelse(!is.na(up$news),
-                               '<i class=\"fa fa-file-alt fa-2x\"></i>',
-                               '<i class=\"fa fa-times fa-2x\"></i>'),
-                        '</button></div>')
+      up$news <- unlist(lapply(
+        X = seq_along(up$news),
+        FUN = function(i) {
+          news <- up$news[i]
+          repo <- up$repo[i]
+          icone <- if(!is.na(news)) {
+            tags$i(class = "fa fa-file-alt fa-2x", style = "color: #FFF;")
+          } else {
+            tags$i(class = "fa fa-times fa-2x", style = "color: #FFF;")
+          }
+          htmltools::doRenderTags(tags$div(
+            onmousedown = "event.preventDefault(); event.stopPropagation(); return false;",
+            tags$button(
+              type = "button",
+              class = "btn btn-action_button",
+              class = if(!is.na(news)) "btn-success" else "btn-danger",
+              id = paste(repo, news, sep = "@"),
+              icone
+            )
+          ))
+        }
+      ))
+      up$loc_version <- mapply(function(x, y) {
+        htmltools::doRenderTags(tags$span(
+          `data-toggle` = "tooltip", title = y,
+          x
+        ))
+      }, x = up$loc_version, y = up$local)
+      up$gh_version <- mapply(function(x, y) {
+        htmltools::doRenderTags(tags$span(
+          `data-toggle` = "tooltip", title = y,
+          x
+        ))
+      }, x = up$gh_version, y = up$remote)
       up
     }
 
@@ -101,15 +135,7 @@ local({
         infoEmpty = "",
         search = "",
         searchPlaceholder = "Search..."
-      ),
-      # pop hover ref/commit for local and remote versions
-      # thanks to SBista https://stackoverflow.com/a/40634033/1395352
-      rowCallback = DT::JS(
-        "function(nRow, aData, iDisplayIndex, iDisplayIndexFull) {",
-        "$('td:eq(0)', nRow).attr('title', aData[7]);",
-        "$('td:eq(1)', nRow).attr('title', aData[3]);",
-        "$('td:eq(2)', nRow).attr('title', aData[4]);",
-        "}")
+      )
     )
     )
     # idea from Victor Perrier and code modified from Antoine Guillot
