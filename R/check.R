@@ -45,3 +45,22 @@ upnews <- function(lib = NULL, debug = FALSE) {
   if (requireNamespace("tibble", quietly = TRUE)) requireNamespace("tibble")
   df_news
 }
+
+
+#' return data.frame of local github packages
+#'
+#' @param lib path to local lib
+#'
+#' @return a named character
+#'
+#' @export
+local_gh <- function(lib = NULL) {
+    gh_pkg <- local_gh_pkg(lib)
+    # FIXME extract_gh should return user/repo
+    # clash if 2 users have same repo name
+    repos <- get_user_repo(gh_pkg)
+    # ref can be a commit, replace by its branch of origin
+    repos <- vapply(repos, gh_fix_ref, character(1))
+    local_sha <- extract_gh_sha1(gh_pkg)
+    local_version(repos, local_sha)
+}

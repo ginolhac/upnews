@@ -118,6 +118,7 @@ test_that("github_release", {
   expect_equal(un$loc_version, "1.0")
   expect_equal(un$local, "master@2db2202")
   expect_false(un$local == un$remote)
+  expect_equal(local_gh(lib = lib), c("falsy" = "master@2db2202"))
   # might remove this one if Gabor creates one!
   expect_equal(un$news, NA)
 })
