@@ -60,14 +60,20 @@ no news for jeroen/credentials/master
 
 - use the **upnews** link in the _Addins_ menu.
 - in the console, a progress bar display the retrieval of remote `HEAD`
-- finally a [`DataTable`](https://rstudio.github.io/DT/) output in the viewer is displayed such as:
+- finally a [`DataTable`](https://rstudio.github.io/DT/) output is displayed:
 
 ![screenshot](docs/screenshot.png)
 
 - the package name has a pophover text with `user/pkg` and a link to the GitHub repo
-- local version is from the `DESCRIPTION` **local** file, and a pophover text displays `branch/commit`
-- remote version is from the `DESCRIPTION` **remote** file, and a pophover text displays `branch/commit`
+- **loc_version** is from the `DESCRIPTION` **local** file, and a pophover text displays `branch/commit`
+- **gh_version** is from the `DESCRIPTION` **remote** file, and a pophover text displays `branch/commit`
+- **date** is the last commit date
 
+when the green buttons are used, `NEWS.md` are fetched and rendered in modals:
+
+![screenshot2](docs/screenshot2.png)
+
+- Demo GIF below:
 
 ![demo gif](docs/demo.gif)
 

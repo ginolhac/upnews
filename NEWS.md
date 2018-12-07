@@ -2,6 +2,7 @@
 
 * NEWS are now displayed within the app via modals
 * After upgrades, don't fetch again data, only if users choose to refresh
+* add function `local_gh()` to list local installed GitHub packages
 
 ## version 0.1.1
 

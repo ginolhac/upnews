@@ -56,11 +56,14 @@ upnews <- function(lib = NULL, debug = FALSE) {
 #' @export
 local_gh <- function(lib = NULL) {
     gh_pkg <- local_gh_pkg(lib)
-    # FIXME extract_gh should return user/repo
-    # clash if 2 users have same repo name
     repos <- get_user_repo(gh_pkg)
+    authors <- unlist(lapply(X = repos, FUN = function(x) {
+      strsplit(x, "/")[[1]][1]
+    }))
     # ref can be a commit, replace by its branch of origin
     repos <- vapply(repos, gh_fix_ref, character(1))
     local_sha <- extract_gh_sha1(gh_pkg)
-    local_version(repos, local_sha)
+    loc_gh <- local_version(repos, local_sha)
+    names(loc_gh) <- paste(authors, names(loc_gh), sep = "/")
+    loc_gh
 }
