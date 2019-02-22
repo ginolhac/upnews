@@ -79,6 +79,7 @@ test_that("GitHub API queries", {
   expect_equal(gh_fix_ref("ginolhac/upnews/master"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/ac1b768"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/31a5300"), "ginolhac/upnews/dev")
+  expect_equal(gh_fix_ref("r-lib/usethis/ed9ae17"), "r-lib/usethis/master") # for #8
   expect_equal(fetch_news("ginolhac/rescueMisReadIndex/master"), NA)
   expect_equal(fetch_news("ginolhac/upnews/master"),
                "https://raw.githubusercontent.com/ginolhac/upnews/master/NEWS.md")

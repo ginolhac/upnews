@@ -83,10 +83,22 @@ gh_fix_ref <- function(rep) {
   paste(rep, collapse = "/")
 }
 
+
 is_on_branch <- function(rep, branch) {
-  status <- gh("GET /repos/:owner/:repo/compare/:ref...:sha",
-               owner = rep$user, repo = rep$repo,
-               ref = branch, sha = rep$ref)$status
+  status <- tryCatch(
+    expr = {
+      status <- gh("GET /repos/:owner/:repo/compare/:ref...:sha",
+                   owner = rep$user, repo = rep$repo,
+                   ref = branch, sha = rep$ref)
+      status$status
+    },
+    # to avoid this:
+    # Error in gh: GitHub API error (404): 404 Not Found
+    # catch it and we know this is not the branch where the commit originate from
+    error = function(e) {
+      "diverged"
+    }
+  )
   if (status %in% c("behind", "identical") ) {
     TRUE
   } else if (status %in% c("diverged", "ahead")) {
