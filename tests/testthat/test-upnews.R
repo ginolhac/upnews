@@ -10,6 +10,18 @@ test_that("we can run the function and get back a dat frame", {
 context("utils")
 
 test_that("without github API", {
+
+
+  expect_error(slash_split("a/bc"), "missing info in a/bc")
+  expect_equal(slash_split("a/b/c"), list(user = "a",
+                                          repo = "b",
+                                          ref = "c"))
+  expect_equal(slash_split("a/b/c/d"), list(user = "a",
+                                            repo = "b",
+                                            ref = "c/d"))
+  expect_equal(slash_split("a/b/c/d/e"), list(user = "a",
+                                              repo = "b",
+                                              ref = "c/d/e"))
   pkgs <- readRDS(system.file("test", "outdated_pks.rds",
                               package = "upnews", mustWork = TRUE))
   reps <- c(bifag = "ginolhac/bifag/d490355",
@@ -65,8 +77,7 @@ test_that("without github API", {
 test_that("GitHub API queries", {
 
   skip_on_cran()
-
-  # skip offline
+  skip_if_offline()
   # using dormant rescueMisReadIndex repo
   expect_equal(get_remote_sha1("ginolhac/rescueMisReadIndex/master")[[1]],
                "253f47a6da1f8209eee4f97f83b2151b4b155b63")
@@ -79,7 +90,6 @@ test_that("GitHub API queries", {
   expect_equal(gh_fix_ref("ginolhac/upnews/master"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/ac1b768"), "ginolhac/upnews/master")
   expect_equal(gh_fix_ref("ginolhac/upnews/31a5300"), "ginolhac/upnews/dev")
-  expect_equal(gh_fix_ref("r-lib/usethis/ed9ae17"), "r-lib/usethis/master") # for #8
   expect_equal(fetch_news("ginolhac/rescueMisReadIndex/master"), NA)
   expect_equal(fetch_news("ginolhac/upnews/master"),
                "https://raw.githubusercontent.com/ginolhac/upnews/master/NEWS.md")

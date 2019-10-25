@@ -39,8 +39,20 @@ get_user_repo <- function(desc) {
 }
 
 slash_split <- function(repos) {
+  num_slashes <- nchar(gsub("[^/]", "", repos))
+  if (num_slashes < 2) stop(paste("missing info in", repos), call. = FALSE)
   l <- as.list(strsplit(repos, "/")[[1]])
-  if (length(l) != 3) stop(paste("missing info in", repos), call. = FALSE)
+  # slashes can be used in branch names
+  # collapse elements from 3 to the end
+  if (num_slashes > 2) {
+    new_l <- vector(mode = "list", length = 3L)
+    for (i in seq_along(l)) {
+      if (i < 3) new_l[[i]] <- l[[i]]
+      else new_l[[3]] <- append(new_l[[3]], l[[i]])
+    }
+    new_l[[3]] <- paste(new_l[[3]], collapse = "/")
+    l <- new_l
+  }
   names(l) <- c("user", "repo", "ref")
   l
 }

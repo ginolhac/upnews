@@ -1,3 +1,7 @@
+## version 0.1.3
+
+* branch names can contain slashes (fix #10 thanks @everetr)
+
 ## version 0.1.2
 
 * NEWS are now displayed within the app via modals

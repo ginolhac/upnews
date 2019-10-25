@@ -1,7 +1,7 @@
 Package: upnews
 Type: Package
 Title: Display news and upgrade outdated GitHub packages
-Version: 0.1.2
+Version: 0.1.3
 Author: c(person("Aurelien", "Ginolhac", , "ginolhac@gmail.com", c("aut", "cre")),
     person("Victor", "Perrier", role = "ctb"))
 Maintainer: Aurelien Ginolhac <ginolhac@gmail.com>
@@ -19,7 +19,7 @@ Suggests:
     shiny (>= 0.13),
     miniUI (>= 0.1.1),
     rstudioapi (>= 0.5),
-    testthat,
+    testthat (>= 2.1.0),
     covr
 Enhances:
     tibble
